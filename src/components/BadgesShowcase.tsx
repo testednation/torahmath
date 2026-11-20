@@ -158,6 +158,39 @@ export function BadgeMedalArt({
           <polyline points="32 27 32 34 37 37" fill="none" />
         </g>
       )}
+      {iconType === 'pi' && (
+        <g stroke={palette.fg} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="20" y1="24" x2="44" y2="24" />
+          <path d="M26 24V42C26 44 24.5 45 23 45" fill="none" />
+          <path d="M38 24V41C38 43.5 39.5 45 42 45" fill="none" />
+        </g>
+      )}
+      {iconType === 'exponents' && (
+        <g>
+          <text
+            x="27"
+            y="41"
+            textAnchor="middle"
+            fontSize="22"
+            fontWeight="700"
+            fill={palette.fg}
+            fontFamily="IBM Plex Mono, monospace"
+          >
+            x
+          </text>
+          <text
+            x="41"
+            y="28"
+            textAnchor="middle"
+            fontSize="14"
+            fontWeight="700"
+            fill={palette.detail}
+            fontFamily="IBM Plex Mono, monospace"
+          >
+            n
+          </text>
+        </g>
+      )}
       {iconType === 'crown' && (
         <g stroke={palette.fg} strokeWidth="2.4" strokeLinejoin="round">
           <path d="M16 42L19 23L27 31L32 19L37 31L45 23L48 42H16Z" fill={palette.detail} fillOpacity="0.3" />

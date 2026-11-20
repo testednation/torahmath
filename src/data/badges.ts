@@ -14,6 +14,8 @@ export type BadgeIconType =
   | 'arcade'
   | 'worksheet'
   | 'daily'
+  | 'pi'
+  | 'exponents'
   | 'crown';
 
 export interface BadgeProgress {
@@ -201,6 +203,30 @@ export const REWARD_BADGES: BadgeDefinition[] = [
     evaluate: (state) => {
       const count = Object.keys(state.dailyChallengesSolved).length;
       return { earned: count >= 1, current: Math.min(count, 1), target: 1 };
+    },
+  },
+  {
+    id: 'pi-explorer',
+    title: 'Pi & Circle Sage',
+    hebrewTitle: 'חכם העיגול',
+    description: 'Master all 5 challenges in Pi (π) & Circle Area in the Gemara.',
+    accent: 'blue',
+    iconType: 'pi',
+    evaluate: (state) => {
+      const { solved, total } = countLessonSolved(state.solvedLog, 'pi-gemara');
+      return { earned: solved >= total, current: solved, target: total };
+    },
+  },
+  {
+    id: 'exponent-wizard',
+    title: 'Star Counter of Powers',
+    hebrewTitle: 'מחשב חזקות',
+    description: 'Master all 5 challenges in Exponents & Powers in the Gemara.',
+    accent: 'amber',
+    iconType: 'exponents',
+    evaluate: (state) => {
+      const { solved, total } = countLessonSolved(state.solvedLog, 'exponents-gemara');
+      return { earned: solved >= total, current: solved, target: total };
     },
   },
   {

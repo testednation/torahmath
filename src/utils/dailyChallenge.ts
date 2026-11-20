@@ -111,7 +111,7 @@ export function generateDailyMathChallenge(
 ): DailyMathChallenge {
   const rng = createDateRng(`cheshbon-daily-${dateKey}`);
   const challengeNumber = computeChallengeNumber(dateKey);
-  const templateIndex = (challengeNumber + Math.floor(rng() * 10)) % 10;
+  const templateIndex = (challengeNumber + Math.floor(rng() * 12)) % 12;
 
   switch (templateIndex) {
     // 0. Chanukah Multi-Menorah Candle Count (Torah / Shabbat 21b)
@@ -431,7 +431,7 @@ export function generateDailyMathChallenge(
     }
 
     // 9. Shulchan Aruch Mezuzah Top Third (Yoreh Deah 289:2)
-    default: {
+    case 9: {
       const third = pick(rng, [24, 25, 26, 27, 28, 30, 32, 33] as const);
       const doorHeight = third * 3;
       const topThirdStart = third * 2;
@@ -459,6 +459,78 @@ export function generateDailyMathChallenge(
         hint: `First divide ${doorHeight} ÷ 3 = ${third} inches per third, then multiply ${third} × 2 for two-thirds!`,
         explanation: `${doorHeight} ÷ 3 = ${third} inches per third. Two thirds up from the floor is 2 × ${third} = ${topThirdStart} inches!`,
         relatedLessonId: 'mezuzah-thirds',
+      };
+    }
+
+    // 10. Pi Circle Area in the Gemara (Eruvin 76b)
+    case 10: {
+      const radius = pick(rng, [2, 3, 4, 5, 6, 8, 9, 10] as const);
+      const rSq = radius * radius;
+      const answer = 3 * rSq;
+      const { options, correctIndex } = buildShuffledOptions(
+        rng,
+        `${answer} sq. amot`,
+        [
+          `${radius * 6} sq. amot`,
+          `${4 * rSq} sq. amot`,
+          `${2 * rSq} sq. amot`,
+          `${answer + 12} sq. amot`,
+        ]
+      );
+      return {
+        dateKey,
+        challengeNumber,
+        track: 'gemara',
+        sourceRef: 'Eruvin 76b',
+        topic: 'Pi (π ≈ 3) & Circle Area',
+        title: 'Eruvin 76b Circle Area Shortcut',
+        hebrewTitle: 'יחס העיגול (π)',
+        question: `Using the Gemara’s Eruvin 76b area rule (Area ≈ 3 × r²), about what is the area of a round courtyard with radius r = ${radius} amot?`,
+        options,
+        correctIndex,
+        hint: `First square the radius (${radius} × ${radius} = ${rSq}), then multiply ${rSq} × 3!`,
+        explanation: `r² = ${radius} × ${radius} = ${rSq}, and 3 × ${rSq} = ${answer} square amot!`,
+        relatedLessonId: 'pi-gemara',
+      };
+    }
+
+    // 11. Exponents & Squares in the Gemara (Eruvin 23b · Berachot 32b)
+    default: {
+      const pairs = [
+        { b: 2, e: 4, label: '2⁴', val: 16, trap: 8 },
+        { b: 2, e: 5, label: '2⁵', val: 32, trap: 10 },
+        { b: 3, e: 3, label: '3³', val: 27, trap: 9 },
+        { b: 4, e: 3, label: '4³', val: 64, trap: 12 },
+        { b: 5, e: 3, label: '5³', val: 125, trap: 15 },
+        { b: 6, e: 2, label: '6²', val: 36, trap: 12 },
+        { b: 7, e: 2, label: '7²', val: 49, trap: 14 },
+        { b: 10, e: 4, label: '10⁴', val: 10000, trap: 40 },
+      ] as const;
+      const p = pick(rng, pairs);
+      const { options, correctIndex } = buildShuffledOptions(
+        rng,
+        `${p.val.toLocaleString()}`,
+        [
+          `${p.trap.toLocaleString()}`,
+          `${(p.val + p.b).toLocaleString()}`,
+          `${Math.max(2, Math.floor(p.val / 2)).toLocaleString()}`,
+          `${(p.val * 2).toLocaleString()}`,
+        ]
+      );
+      return {
+        dateKey,
+        challengeNumber,
+        track: 'gemara',
+        sourceRef: 'Berachot 32b · Eruvin 23b',
+        topic: 'Exponents & Repeated Multiplication',
+        title: `Gemara Powers Challenge (${p.label})`,
+        hebrewTitle: 'חזקות וריבועים',
+        question: `Remember that an exponent means repeated multiplication (not ${p.b} × ${p.e}!). What is the exact value of ${p.label}?`,
+        options,
+        correctIndex,
+        hint: `Multiply ${p.e} copies of ${p.b} together: ${Array.from({ length: p.e }, () => p.b).join(' × ')}.`,
+        explanation: `${p.label} = ${Array.from({ length: p.e }, () => p.b).join(' × ')} = ${p.val.toLocaleString()}!`,
+        relatedLessonId: 'exponents-gemara',
       };
     }
   }

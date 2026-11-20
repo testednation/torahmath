@@ -92,8 +92,9 @@ export function downloadLessonWorksheetPdf(
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9.5);
   doc.setTextColor(100, 116, 139);
+  const lessonNum = String(lesson.order).padStart(2, '0');
   const metaLine = toPdfSafeText(
-    `Lesson 0${lesson.order} | ${formatTrackLabel(lesson.track)} | ${lesson.sourceRef} | ${lesson.mathTopic} | ${lesson.ageRange}`
+    `Lesson ${lessonNum} | ${formatTrackLabel(lesson.track)} | ${lesson.sourceRef} | ${lesson.mathTopic} | ${lesson.ageRange}`
   );
   doc.text(metaLine, margin, y);
 
@@ -289,7 +290,7 @@ export function downloadLessonWorksheetPdf(
     doc.setFontSize(16);
     doc.setTextColor(15, 23, 42);
     doc.text(
-      toPdfSafeText(`Lesson 0${lesson.order}: ${lesson.title} - Answer Key`),
+      toPdfSafeText(`Lesson ${lessonNum}: ${lesson.title} - Answer Key`),
       margin,
       y
     );

@@ -74,7 +74,7 @@ export function WorksheetModal({
                 id="worksheet-modal-title"
                 className="text-base font-bold text-slate-900 truncate"
               >
-                Printable PDF Worksheet · Lesson 0{lesson.order}
+                Printable PDF Worksheet · Lesson {String(lesson.order).padStart(2, '0')}
               </h2>
               <p className="text-xs text-slate-500 truncate">
                 {lesson.title} · {spec.practiceProblems.length} Offline Practice Problems
@@ -172,7 +172,7 @@ export function WorksheetModal({
 
               <div>
                 <p className="text-xs text-slate-500 mb-1">
-                  Lesson 0{lesson.order} · {formatTrackLabel(lesson.track)} ·{' '}
+                  Lesson {String(lesson.order).padStart(2, '0')} · {formatTrackLabel(lesson.track)} ·{' '}
                   {lesson.sourceRef} · {lesson.mathTopic} · {lesson.ageRange}
                 </p>
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -262,7 +262,7 @@ export function WorksheetModal({
                     Teacher &amp; Parent Answer Key
                   </p>
                   <h4 className="text-lg font-bold text-slate-900">
-                    Lesson 0{lesson.order}: {lesson.title}
+                    Lesson {String(lesson.order).padStart(2, '0')}: {lesson.title}
                   </h4>
                 </div>
 

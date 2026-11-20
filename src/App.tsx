@@ -53,6 +53,8 @@ import { GematriaWorkshopSandbox } from './components/sandboxes/GematriaWorkshop
 import { ShaotZmaniyotSandbox } from './components/sandboxes/ShaotZmaniyotSandbox';
 import { MaaserPercentSandbox } from './components/sandboxes/MaaserPercentSandbox';
 import { MezuzahThirdsSandbox } from './components/sandboxes/MezuzahThirdsSandbox';
+import { PiGemaraSandbox } from './components/sandboxes/PiGemaraSandbox';
+import { ExponentsGemaraSandbox } from './components/sandboxes/ExponentsGemaraSandbox';
 
 export default function App() {
   const [progress, setProgress] = useState<SavedProgressState>(() =>
@@ -295,6 +297,10 @@ export default function App() {
         return <MaaserPercentSandbox lesson={lesson} />;
       case 'mezuzah-thirds':
         return <MezuzahThirdsSandbox lesson={lesson} />;
+      case 'pi-gemara':
+        return <PiGemaraSandbox lesson={lesson} />;
+      case 'exponents-gemara':
+        return <ExponentsGemaraSandbox lesson={lesson} />;
     }
   }
 
@@ -707,7 +713,7 @@ export default function App() {
                         {/* Unboxed clean metadata line (Zero-Pill Discipline) */}
                         <div className="flex items-center justify-between gap-2 text-xs text-slate-500">
                           <span className="truncate">
-                            0{lesson.order} · {formatTrackLabel(lesson.track)} · {lesson.sourceRef}
+                            {String(lesson.order).padStart(2, '0')} · {formatTrackLabel(lesson.track)} · {lesson.sourceRef}
                           </span>
                           <span className="font-mono shrink-0 tabular-nums text-slate-400">
                             {lesson.ageRange}
@@ -926,7 +932,7 @@ export default function App() {
                       }`}
                     >
                       <span className="font-mono text-[11px] text-slate-400">
-                        0{l.order}
+                        {String(l.order).padStart(2, '0')}
                       </span>
                       <span>{l.title.split(' ').slice(0, 2).join(' ')}</span>
                       {done && (
@@ -945,7 +951,7 @@ export default function App() {
             <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
               <div className="max-w-3xl space-y-3">
                 <p className="text-xs font-medium text-slate-500">
-                  Lesson 0{activeLesson.order} ·{' '}
+                  Lesson {String(activeLesson.order).padStart(2, '0')} ·{' '}
                   {formatTrackLabel(activeLesson.track)} ·{' '}
                   {activeLesson.sourceRef} · {activeLesson.mathTopic} ·{' '}
                   {activeLesson.ageRange}

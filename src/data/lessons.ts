@@ -7,7 +7,9 @@ export type LessonId =
   | 'gematria-workshop'
   | 'shaot-zmaniyot'
   | 'maaser-percent'
-  | 'mezuzah-thirds';
+  | 'mezuzah-thirds'
+  | 'pi-gemara'
+  | 'exponents-gemara';
 
 export type TrackType = 'torah' | 'gemara' | 'shulchan-aruch';
 
@@ -1043,6 +1045,246 @@ export const LESSONS: LessonDefinition[] = [
         hint: 'Subtract 3.5 inches from 84 inches: 84 − 3 = 81, then take away 0.5 more!',
         explanation:
           '84 − 3.5 = 80.5 inches! Hanging it between 56 in and 80.5 in keeps it inside the kosher top third with 1 tefach to spare.',
+      },
+    ],
+  },
+  {
+    id: 'pi-gemara',
+    order: 10,
+    track: 'gemara',
+    title: 'Pi (π) & Circle Area in the Gemara',
+    hebrewTitle: 'יחס העיגול (π)',
+    sourceRef: 'Eruvin 14a & 76b · Rambam',
+    mathTopic: 'Pi (π ≈ 3, 22/7, 3.14) & Circle Area (πr²)',
+    ageRange: 'Ages 9–12',
+    summary:
+      'Discover how the Gemara finds the area of a circle by removing 1/4 of a square (3 × r²), then compare the Sages’ quick 3 rule with Rambam & Tosafot’s 22/7 and exact π!',
+    storyHook:
+      'In Eruvin 76b, the Gemara teaches a remarkable geometry shortcut: "A square is larger than the circle fitted inside it by one quarter!" Since a square around a circle has area 4 × r², taking away 1/4 leaves 3 × r². Later, Rambam and Tosafot explain that exact π is closer to 3 and 1/7 (22/7 ≈ 3.1429)!',
+    formulaPreview: 'A ≈ 3 × r²  |  Rambam: (22/7) × r²  |  Exact: π × r²',
+    stages: [
+      {
+        step: 1,
+        title: 'See Why a Square Loses 1/4 to a Circle',
+        prompt:
+          'Look at the 4 equal r × r quadrants inside the square. Notice how the four empty corner scraps around the circle add up to about 1 full quadrant (1/4 of the square)!',
+        takeaway:
+          'Removing 1/4 from 4r² leaves 3r²—that is the Gemara’s Eruvin 76b rule for circle area (π ≈ 3)!',
+      },
+      {
+        step: 2,
+        title: 'Test Radius 7 with Rambam’s 22/7',
+        prompt:
+          'Switch to "Compare 3 vs 22/7 vs π" and click the "Radius 7 (22/7 Magic!)" preset. Watch how 22/7 cancels the 7 cleanly!',
+        takeaway:
+          'When r = 7, (22/7) × 7² = 22 × 7 = 154—almost identical to exact π × 49 = 153.94!',
+      },
+      {
+        step: 3,
+        title: 'Compare Radius vs. Diameter',
+        prompt:
+          'Slide the Radius from 2 to 10 and watch Diameter (2 × r) double while Area (π × r²) grows much faster by squaring r!',
+        takeaway:
+          'Radius is halfway across; Diameter is all the way across (d = 2r). Area always squares the radius (r × r)!',
+      },
+    ],
+    challenges: [
+      {
+        id: 'pi-1',
+        lessonId: 'pi-gemara',
+        track: 'gemara',
+        sourceRef: 'Eruvin 14a',
+        question:
+          'A round courtyard has a radius (center to edge) of 6 amot. What is its diameter (all the way across)?',
+        options: ['3 amot', '6 amot', '12 amot', '36 amot'],
+        correctIndex: 2,
+        hint: 'Diameter is always double the radius (d = 2 × r).',
+        explanation:
+          'Diameter = 2 × radius = 2 × 6 = 12 amot all the way across!',
+      },
+      {
+        id: 'pi-2',
+        lessonId: 'pi-gemara',
+        track: 'gemara',
+        sourceRef: 'Eruvin 76b',
+        question:
+          'Using the Gemara’s Eruvin 76b area rule (Area ≈ 3 × r²), about what is the area of a circle with radius r = 4 amot?',
+        options: [
+          '24 square amot',
+          '48 square amot',
+          '64 square amot',
+          '96 square amot',
+        ],
+        correctIndex: 1,
+        hint: 'First square the radius (4 × 4 = 16), then multiply by 3!',
+        explanation:
+          'r² = 4 × 4 = 16, and 3 × 16 = 48 square amot! (Exact π × 16 ≈ 50.27 square amot.)',
+      },
+      {
+        id: 'pi-3',
+        lessonId: 'pi-gemara',
+        track: 'gemara',
+        sourceRef: 'Eruvin 76b',
+        question:
+          'Eruvin 76b teaches that a square is larger than the circle inside it by 1/4. If a square courtyard has area 100 sq. amot, about how large is the circle fitted inside it?',
+        options: [
+          '25 square amot',
+          '50 square amot',
+          '75 square amot',
+          '90 square amot',
+        ],
+        correctIndex: 2,
+        hint: 'Find 1/4 of 100 (25) and subtract it from 100: 100 − 25.',
+        explanation:
+          '1/4 of 100 is 25, so taking away the 4 corner scraps leaves 100 − 25 = 75 square amot (exact π × 25 ≈ 78.54)!',
+      },
+      {
+        id: 'pi-4',
+        lessonId: 'pi-gemara',
+        track: 'gemara',
+        sourceRef: 'Rambam Eruvin 1:5 · Tosafot',
+        question:
+          'Rambam and Tosafot explain that π is very close to 3 and 1/7 (22/7). Using π ≈ 22/7, what is the circumference (C = π × d) of a circle with diameter d = 7 amot?',
+        options: ['14 amot', '20 amot', '21 amot', '22 amot'],
+        correctIndex: 3,
+        hint: 'Multiply (22/7) × 7—the 7s cancel right out!',
+        explanation:
+          '(22/7) × 7 = 22 amot! Notice how much closer 22 is to exact π × 7 = 21.99 than 3 × 7 = 21!',
+      },
+      {
+        id: 'pi-5',
+        lessonId: 'pi-gemara',
+        track: 'gemara',
+        sourceRef: 'Rambam Eruvin 1:5',
+        question:
+          'Using Rambam’s 22/7 approximation, what is the area (A = π × r²) of a round plaza with radius r = 7 amot?',
+        options: [
+          '147 square amot',
+          '154 square amot',
+          '168 square amot',
+          '196 square amot',
+        ],
+        correctIndex: 1,
+        hint: 'Compute (22/7) × 7 × 7 = 22 × 7 (think 20 × 7 = 140, plus 2 × 7 = 14).',
+        explanation:
+          '(22/7) × 49 = 22 × 7 = 154 square amot! Exact π × 49 is 153.94—incredibly accurate!',
+      },
+    ],
+  },
+  {
+    id: 'exponents-gemara',
+    order: 11,
+    track: 'gemara',
+    title: 'Exponents & Powers in the Gemara',
+    hebrewTitle: 'חזקות וריבועים',
+    sourceRef: 'Berachot 32b · Eruvin 23b',
+    mathTopic: 'Exponents, Squares (x²) & Powers of 10',
+    ageRange: 'Ages 8–12',
+    summary:
+      'Learn what exponents really mean by building square courtyards from Eruvin 23b (50² = 2,500), doubling powers of 2, and counting the starry sky in Berachot 32b using Powers of 10!',
+    storyHook:
+      'In Berachot 32b, the Sage Reish Lakish counts the stars in the universe by multiplying huge groups by 10,000 × 10,000—climbing all the way to 10¹⁸ (a 1 with 18 zeros)! And in Eruvin 23b, the Sages measure square Mishkan courtyards as 50 × 50 = 50². Exponents are math’s superpower for repeated multiplication!',
+    formulaPreview: 'bᵉ = b × b × … × b  |  50² = 2,500  |  10⁴ = 10,000',
+    stages: [
+      {
+        step: 1,
+        title: 'Exponents Multiply—They Don’t Just Add!',
+        prompt:
+          'Set Base = 2 and slide the Exponent from 1 up to 6. Compare the real exponent value (2ᵉ) against the common trap (2 × e)!',
+        takeaway:
+          '2⁴ means 2 × 2 × 2 × 2 = 16—NOT 2 × 4 = 8! Every +1 on the exponent multiplies by the base one more time.',
+      },
+      {
+        step: 2,
+        title: 'Build a Square (x²) & Cube (x³)',
+        prompt:
+          'Click "Eruvin Square (5²)" to see a 5 × 5 grid of 25 squares (just like Eruvin 23b’s 50² = 2,500 Beit Se’ah), then click "3D Cube (3³)" to see 3 × 3 × 3 = 27!',
+        takeaway:
+          'Exponent 2 makes a flat square (Area = s²); exponent 3 makes a 3D cube (Volume = s³)!',
+      },
+      {
+        step: 3,
+        title: 'Count the Stars of Berachot 32b (10ⁿ)',
+        prompt:
+          'Switch to "Stars of Berachot 32b (10ⁿ)" and slide the Power of 10 from 10¹ to 10⁶—then click Reish Lakish’s 10¹⁸!',
+        takeaway:
+          'With base 10, the exponent simply tells you how many zeros follow the 1: 10⁴ = 10,000 (a myriad in the Gemara)!',
+      },
+    ],
+    challenges: [
+      {
+        id: 'exp-1',
+        lessonId: 'exponents-gemara',
+        track: 'gemara',
+        sourceRef: 'Exponents Basics',
+        question: 'What is the value of 2⁴ (2 to the 4th power)?',
+        options: [
+          '6 (2 + 4)',
+          '8 (2 × 4)',
+          '16 (2 × 2 × 2 × 2)',
+          '32 (five 2s)',
+        ],
+        correctIndex: 2,
+        hint: 'Multiply four 2s together: 2 × 2 = 4, 4 × 2 = 8, 8 × 2 = ?',
+        explanation:
+          '2⁴ = 2 × 2 × 2 × 2 = 16! Remember: the exponent tells how many times to multiply the base by itself.',
+      },
+      {
+        id: 'exp-2',
+        lessonId: 'exponents-gemara',
+        track: 'gemara',
+        sourceRef: 'Eruvin 23b',
+        question:
+          'In Eruvin 23b, a classic Beit Se’ah courtyard is a square measuring 50 amot × 50 amot (50²). What is 50²?',
+        options: [
+          '1,000 square amot',
+          '2,500 square amot',
+          '5,000 square amot',
+          '25,000 square amot',
+        ],
+        correctIndex: 1,
+        hint: 'Multiply 5 × 5 = 25, then attach the two zeros from 50 and 50!',
+        explanation:
+          '50² = 50 × 50 = 2,500 square amot—the exact area of a Beit Se’ah in Eruvin 23b!',
+      },
+      {
+        id: 'exp-3',
+        lessonId: 'exponents-gemara',
+        track: 'gemara',
+        sourceRef: 'Berachot 32b',
+        question:
+          'In Berachot 32b, Reish Lakish counts the stars using groups of a "myriad" (10,000). How do you write 10,000 as a power of 10?',
+        options: ['10²', '10³', '10⁴', '10⁵'],
+        correctIndex: 2,
+        hint: 'Count the number of zeros in 10,000!',
+        explanation:
+          '10,000 has 4 zeros, because 10 × 10 × 10 × 10 = 10,000 = 10⁴!',
+      },
+      {
+        id: 'exp-4',
+        lessonId: 'exponents-gemara',
+        track: 'gemara',
+        sourceRef: 'Eruvin 23b · 3D Cubes',
+        question:
+          'What is 3³ ("3 cubed", like a 3 × 3 × 3 cube of wooden blocks)?',
+        options: ['6', '9', '18', '27'],
+        correctIndex: 3,
+        hint: 'Multiply 3 × 3 = 9, then multiply 9 × 3!',
+        explanation:
+          '3³ = 3 × 3 × 3 = 9 × 3 = 27! Notice that 3³ (27) is much bigger than 3 × 3 (9).',
+      },
+      {
+        id: 'exp-5',
+        lessonId: 'exponents-gemara',
+        track: 'gemara',
+        sourceRef: 'Berachot 32b',
+        question:
+          'When you multiply powers of 10, you add the exponents (like 10³ × 10² = 10⁵). What number is 10⁵?',
+        options: ['100,000', '50,000', '10,000', '1,000,000'],
+        correctIndex: 0,
+        hint: 'Write a 1 followed by 5 zeros!',
+        explanation:
+          '10⁵ = 100,000 (one hundred thousand)—1,000 × 100 = 100,000 with 3 + 2 = 5 zeros!',
       },
     ],
   },

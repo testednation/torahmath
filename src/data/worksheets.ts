@@ -561,4 +561,124 @@ export const LESSON_WORKSHEETS: Record<LessonId, LessonWorksheetSpec> = {
       },
     ],
   },
+
+  'pi-gemara': {
+    lessonId: 'pi-gemara',
+    conceptTitle: 'Pi (π), Circle Area & Eruvin 76b’s Quarter Rule',
+    conceptSummary:
+      'In Eruvin 76b, the Gemara teaches that a square is larger than the circle fitted inside it by one quarter (1/4). Because a square around a circle of radius r has area 4 x r^2, taking away 1/4 leaves Area ~ 3 x r^2. Rambam (Eruvin 1:5) and Tosafot add that exact pi is closer to 3 and 1/7 (22/7 ~ 3.1429).',
+    keyFormula: 'd = 2 x r  |  Gemara Area ~ 3 x r^2  |  Rambam Area ~ (22/7) x r^2',
+    workedExample: {
+      problem: 'Find the approximate area of a round courtyard with radius r = 5 amot using the Gemara’s rule (3 x r^2).',
+      steps: [
+        'Square the radius first: r^2 = 5 x 5 = 25.',
+        'Multiply by 3 (the Gemara’s quick pi rule): 3 x 25 = 75 square amot.',
+        'Check with Eruvin 76b: the outer 10 x 10 square has area 100, and 100 minus 1/4 (25) = 75!',
+      ],
+      answer: '75 square amot (exact pi x 25 ~ 78.54 sq. amot)',
+    },
+    practiceProblems: [
+      {
+        number: 1,
+        prompt:
+          'A round courtyard has radius r = 3 amot. What is its diameter (d = 2 x r), and what is its approximate area using 3 x r^2?',
+        hint: 'Diameter is 2 x 3. For area, find r^2 = 3 x 3 = 9, then multiply by 3!',
+        answer: 'Diameter = 6 amot; Gemara Area = 27 square amot',
+        explanation: 'd = 2 x 3 = 6 amot. Area ~ 3 x (3 x 3) = 3 x 9 = 27 square amot.',
+      },
+      {
+        number: 2,
+        prompt:
+          'Using Eruvin 76b’s rule ("square beats circle by 1/4"), if a square courtyard has an area of 64 square amot, about what is the area of the largest circle fitted inside it?',
+        hint: 'Find 1/4 of 64 (64 / 4 = 16), then subtract 64 - 16!',
+        answer: '48 square amot',
+        explanation: '64 / 4 = 16 corner area removed; 64 - 16 = 48 square amot.',
+      },
+      {
+        number: 3,
+        prompt:
+          'Using Rambam’s fraction pi ~ 22/7, calculate the circumference (C = pi x d) of a round garden with diameter d = 14 amot.',
+        hint: 'Multiply (22/7) x 14: divide 14 / 7 = 2 first, then multiply 22 x 2!',
+        answer: '44 amot',
+        explanation: '(22/7) x 14 = 22 x 2 = 44 amot!',
+      },
+      {
+        number: 4,
+        prompt:
+          'A circular plaza has radius r = 7 amot. Compare its area using the Gemara quick rule (3 x r^2) versus Rambam’s rule ((22/7) x r^2).',
+        hint: '7^2 = 49. Compute 3 x 49 and (22/7) x 49 = 22 x 7!',
+        answer: 'Gemara quick rule: 147 sq. amot; Rambam 22/7 rule: 154 sq. amot',
+        explanation: '3 x 49 = 147 sq. amot; (22/7) x 49 = 22 x 7 = 154 sq. amot (very close to exact 153.94).',
+      },
+      {
+        number: 5,
+        isBonus: true,
+        prompt:
+          'Bonus Challenge: If you DOUBLE the radius of a circle from r = 3 to r = 6, how many times larger does its area become?',
+        hint: 'Compare 3 x (3^2) = 27 with 3 x (6^2) = 108. Divide 108 / 27!',
+        answer: '4 times larger (2^2 = 4)',
+        explanation: 'Area grows with r^2: doubling r makes r^2 grow by 2 x 2 = 4 times (108 / 27 = 4)!',
+      },
+    ],
+  },
+
+  'exponents-gemara': {
+    lessonId: 'exponents-gemara',
+    conceptTitle: 'Exponents, Squares (x^2), Cubes (x^3) & Powers of 10',
+    conceptSummary:
+      'An exponent tells you how many times to multiply the base number by itself (so 2^4 = 2 x 2 x 2 x 2 = 16, NOT 2 x 4 = 8). In Eruvin 23b, a square Beit Se’ah courtyard is 50^2 = 2,500 sq. amot, and in Berachot 32b Reish Lakish counts the starry sky using huge Powers of 10 (10^4 = 10,000, climbing to 10^18)!',
+    keyFormula: 'b^e = b x b x ... x b (e times)  |  50^2 = 2,500  |  10^n = 1 with n zeros',
+    workedExample: {
+      problem: 'Calculate 2^5 and compare it to 2 x 5.',
+      steps: [
+        'Write five 2s multiplied together: 2 x 2 x 2 x 2 x 2.',
+        'Multiply step by step: 2 x 2 = 4 -> 4 x 2 = 8 -> 8 x 2 = 16 -> 16 x 2 = 32.',
+        'Notice that 2^5 = 32 is much larger than 2 x 5 = 10!',
+      ],
+      answer: '2^5 = 32',
+    },
+    practiceProblems: [
+      {
+        number: 1,
+        prompt:
+          'Write out 4^3 as repeated multiplication and find its exact value.',
+        hint: 'Multiply three 4s together: 4 x 4 = 16, then 16 x 4!',
+        answer: '4 x 4 x 4 = 64',
+        explanation: '4 x 4 = 16, and 16 x 4 = 64.',
+      },
+      {
+        number: 2,
+        prompt:
+          'In Eruvin 23b, a square courtyard has sides of 50 amot (50^2). Find 50^2, and also find the area of a smaller square courtyard of 20^2.',
+        hint: '50 x 50 = (5 x 5) with two zeros; 20 x 20 = (2 x 2) with two zeros.',
+        answer: '50^2 = 2,500 sq. amot; 20^2 = 400 sq. amot',
+        explanation: '50 x 50 = 2,500 and 20 x 20 = 400 square amot.',
+      },
+      {
+        number: 3,
+        prompt:
+          'In Berachot 32b, Reish Lakish counts stars in groups of 10,000 (a myriad). Write 10,000 and 1,000,000 as Powers of 10.',
+        hint: 'Count the zeros after the 1 in each number!',
+        answer: '10,000 = 10^4; 1,000,000 = 10^6',
+        explanation: '10,000 has 4 zeros (10^4) and 1,000,000 has 6 zeros (10^6).',
+      },
+      {
+        number: 4,
+        prompt:
+          'Which is bigger: 2^6 or 6^2? Show both answers!',
+        hint: 'Compute 2 x 2 x 2 x 2 x 2 x 2 and compare with 6 x 6!',
+        answer: '2^6 (64) is bigger than 6^2 (36)',
+        explanation: '2^6 = 64 while 6^2 = 36, so 2^6 is 28 larger!',
+      },
+      {
+        number: 5,
+        isBonus: true,
+        prompt:
+          'Bonus Challenge (Berachot 32b): If you multiply 10^4 (10,000) x 10^4 (10,000), what Power of 10 do you get, and how many zeros does it have?',
+        hint: 'When multiplying powers of 10, add the exponents: 4 + 4!',
+        answer: '10^8 (100,000,000 — 8 zeros, one hundred million!)',
+        explanation: '10^4 x 10^4 = 10^(4+4) = 10^8 = 100,000,000!',
+      },
+    ],
+  },
 };

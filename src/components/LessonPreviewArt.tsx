@@ -269,5 +269,73 @@ export function LessonPreviewArt({ lessonId }: LessonPreviewArtProps) {
           </text>
         </svg>
       );
+
+    case 'pi-gemara':
+      return (
+        <svg viewBox="0 0 220 92" className="w-full h-24" aria-hidden="true">
+          <rect x="0" y="0" width="220" height="92" rx="10" fill="#F8FAFC" />
+          {/* Square with highlighted 1/4 corner scraps and inscribed circle */}
+          <rect x="34" y="16" width="56" height="56" fill="#FEF3C7" stroke="#334155" strokeWidth="1.8" />
+          <circle cx="62" cy="44" r="28" fill="#DBEAFE" stroke="#1D4ED8" strokeWidth="2" />
+          <line x1="62" y1="44" x2="90" y2="44" stroke="#B45309" strokeWidth="2" />
+          <text x="76" y="40" textAnchor="middle" fontSize="9" fontFamily="IBM Plex Mono, monospace" fontWeight="700" fill="#92400E">
+            r
+          </text>
+          <text x="155" y="34" textAnchor="middle" fontSize="11" fontFamily="IBM Plex Mono, monospace" fontWeight="700" fill="#1D4ED8">
+            A ≈ 3 × r²
+          </text>
+          <text x="155" y="52" textAnchor="middle" fontSize="10" fontFamily="IBM Plex Mono, monospace" fill="#047857">
+            22/7 ≈ 3.14
+          </text>
+          <text x="155" y="70" textAnchor="middle" fontSize="9" fontFamily="IBM Plex Mono, monospace" fill="#64748B">
+            Eruvin 76b · Rambam
+          </text>
+        </svg>
+      );
+
+    case 'exponents-gemara':
+      return (
+        <svg viewBox="0 0 220 92" className="w-full h-24" aria-hidden="true">
+          <rect x="0" y="0" width="220" height="92" rx="10" fill="#F8FAFC" />
+          {/* Exponential growth bars (2^1, 2^2, 2^3, 2^4) */}
+          {[
+            { label: '2¹', h: 10, x: 24 },
+            { label: '2²', h: 20, x: 52 },
+            { label: '2³', h: 36, x: 80 },
+            { label: '2⁴', h: 56, x: 108 },
+          ].map((bar) => (
+            <g key={bar.label}>
+              <rect
+                x={bar.x}
+                y={72 - bar.h}
+                width="18"
+                height={bar.h}
+                rx="3"
+                fill="#1D4ED8"
+                opacity={0.35 + bar.h / 90}
+              />
+              <text
+                x={bar.x + 9}
+                y="84"
+                textAnchor="middle"
+                fontSize="9"
+                fontFamily="IBM Plex Mono, monospace"
+                fill="#475569"
+              >
+                {bar.label}
+              </text>
+            </g>
+          ))}
+          <text x="172" y="34" textAnchor="middle" fontSize="11" fontFamily="IBM Plex Mono, monospace" fontWeight="700" fill="#0F172A">
+            50² = 2,500
+          </text>
+          <text x="172" y="54" textAnchor="middle" fontSize="10.5" fontFamily="IBM Plex Mono, monospace" fontWeight="700" fill="#B45309">
+            10⁴ = 10,000
+          </text>
+          <text x="172" y="72" textAnchor="middle" fontSize="9" fontFamily="IBM Plex Mono, monospace" fill="#64748B">
+            Berachot 32b
+          </text>
+        </svg>
+      );
   }
 }
