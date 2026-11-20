@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -6,6 +6,8 @@ import {
   Star,
   Menu,
   X,
+  FileText,
+  Download,
 } from 'lucide-react';
 import {
   ASSET_IMAGES,
@@ -16,6 +18,17 @@ import {
   type LessonId,
   type TrackType,
 } from './data/lessons';
+import { REWARD_BADGES, type BadgeDefinition } from './data/badges';
+import {
+  DEFAULT_PROGRESS,
+  loadLocalProgress,
+  saveLocalProgress,
+  clearLocalProgress,
+  computeNextStreak,
+  type AppView,
+  type SavedProgressState,
+} from './utils/localProgress';
+import { playFanfare } from './utils/soundFx';
 import { ResilientImage } from './components/ResilientImage';
 import { LessonPreviewArt } from './components/LessonPreviewArt';
 import { LessonChallengePanel } from './components/LessonChallengePanel';
@@ -23,11 +36,13 @@ import { PracticeArena } from './components/PracticeArena';
 import { DailyWisdomBanner } from './components/DailyWisdomBanner';
 import { WeeklyProgressChart } from './components/WeeklyProgressChart';
 import { BeginnerTutorial } from './components/BeginnerTutorial';
-import {
-  MathGamesHub,
-  type GameId,
-  type GameStats,
-} from './components/MathGamesHub';
+import { WorksheetModal } from './components/WorksheetModal';
+import { BadgesShowcase } from './components/BadgesShowcase';
+import { BadgeUnlockToast } from './components/BadgeUnlockToast';
+import { OfflineIndicator } from './components/OfflineIndicator';
+import { PWAInstallButton } from './components/PWAInstallButton';
+import { downloadLessonWorksheetPdf } from './utils/worksheetPdf';
+import { MathGamesHub, type GameId } from './components/MathGamesHub';
 import { ChanukahCandlesSandbox } from './components/sandboxes/ChanukahCandlesSandbox';
 import { NoahsArkSandbox } from './components/sandboxes/NoahsArkSandbox';
 import { TallitFractionsSandbox } from './components/sandboxes/TallitFractionsSandbox';
@@ -38,115 +53,54 @@ import { ShaotZmaniyotSandbox } from './components/sandboxes/ShaotZmaniyotSandbo
 import { MaaserPercentSandbox } from './components/sandboxes/MaaserPercentSandbox';
 import { MezuzahThirdsSandbox } from './components/sandboxes/MezuzahThirdsSandbox';
 
-type ActiveView = 'explore' | 'beginner' | 'games' | 'lesson' | 'practice';
-
-const STORAGE_KEY = 'cheshbon_solved_questions_v1';
-const SOLVED_LOG_KEY = 'cheshbon_solved_log_v1';
-const BEGINNER_DONE_KEY = 'cheshbon_beginner_done_v1';
-const GAME_STATS_KEY = 'cheshbon_game_stats_v1';
-
-function loadSolvedLog(): Record<string, string> {
-  try {
-    const rawLog = window.localStorage.getItem(SOLVED_LOG_KEY);
-    if (rawLog) {
-      const parsed = JSON.parse(rawLog);
-      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-        const clean: Record<string, string> = {};
-        for (const [k, v] of Object.entries(parsed)) {
-          if (typeof k === 'string' && typeof v === 'string') {
-            clean[k] = v;
-          }
-        }
-        return clean;
-      }
-    }
-
-    // Backwards-compatible migration from legacy solvedIds array
-    const rawLegacy = window.localStorage.getItem(STORAGE_KEY);
-    if (!rawLegacy) return {};
-    const parsedLegacy = JSON.parse(rawLegacy);
-    if (Array.isArray(parsedLegacy)) {
-      const nowIso = new Date().toISOString();
-      const migrated: Record<string, string> = {};
-      for (const id of parsedLegacy) {
-        if (typeof id === 'string') {
-          migrated[id] = nowIso;
-        }
-      }
-      return migrated;
-    }
-    return {};
-  } catch {
-    return {};
-  }
-}
-
-function loadBeginnerDone(): boolean {
-  try {
-    return window.localStorage.getItem(BEGINNER_DONE_KEY) === 'true';
-  } catch {
-    return false;
-  }
-}
-
-function loadGameStats(): Record<string, GameStats> {
-  try {
-    const raw = window.localStorage.getItem(GAME_STATS_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
-}
-
 export default function App() {
-  const [view, setView] = useState<ActiveView>('explore');
-  const [activeLessonId, setActiveLessonId] = useState<LessonId>('chanukah-candles');
+  const [progress, setProgress] = useState<SavedProgressState>(() =>
+    loadLocalProgress()
+  );
+  const [view, setView] = useState<AppView>(() => progress.lastView);
+  const [activeLessonId, setActiveLessonId] = useState<LessonId>(() =>
+    LESSONS.some((l) => l.id === progress.lastLessonId)
+      ? progress.lastLessonId
+      : 'chanukah-candles'
+  );
   const [initialGameId, setInitialGameId] = useState<GameId | null>(null);
   const [trackFilter, setTrackFilter] = useState<'all' | TrackType>('all');
-  const [solvedLog, setSolvedLog] = useState<Record<string, string>>(() =>
-    loadSolvedLog()
-  );
-  const [beginnerDone, setBeginnerDone] = useState<boolean>(() =>
-    loadBeginnerDone()
-  );
-  const [gameStats, setGameStats] = useState<Record<string, GameStats>>(() =>
-    loadGameStats()
-  );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [worksheetLessonId, setWorksheetLessonId] = useState<LessonId | null>(null);
+  const [toastBadge, setToastBadge] = useState<BadgeDefinition | null>(null);
+
+  const { solvedLog, beginnerDone, beginnerStep, gameStats, studentName } = progress;
 
   const solvedIds = Object.keys(solvedLog).filter(
     (k) => !k.startsWith('game:')
   );
 
+  // Autosave all progress locally on every change
   useEffect(() => {
-    try {
-      window.localStorage.setItem(SOLVED_LOG_KEY, JSON.stringify(solvedLog));
-      window.localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(Object.keys(solvedLog).filter((k) => !k.startsWith('game:')))
-      );
-    } catch {
-      // Ignore storage quota errors in restricted iframe sandboxes
-    }
-  }, [solvedLog]);
+    saveLocalProgress(progress);
+  }, [progress]);
 
+  // Evaluate 12 reward badges and trigger celebratory unlock toast for newly earned badges
   useEffect(() => {
-    try {
-      window.localStorage.setItem(BEGINNER_DONE_KEY, beginnerDone ? 'true' : 'false');
-    } catch {
-      // Ignore storage quota errors
+    const newlyUnlocked: BadgeDefinition[] = [];
+    for (const badge of REWARD_BADGES) {
+      if (!progress.unlockedBadges[badge.id] && badge.evaluate(progress).earned) {
+        newlyUnlocked.push(badge);
+      }
     }
-  }, [beginnerDone]);
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(GAME_STATS_KEY, JSON.stringify(gameStats));
-    } catch {
-      // Ignore storage quota errors
+    if (newlyUnlocked.length > 0) {
+      const now = new Date().toISOString();
+      setProgress((prev) => {
+        const nextUnlocked = { ...prev.unlockedBadges };
+        for (const b of newlyUnlocked) {
+          nextUnlocked[b.id] = now;
+        }
+        return { ...prev, unlockedBadges: nextUnlocked };
+      });
+      setToastBadge(newlyUnlocked[0]);
+      playFanfare();
     }
-  }, [gameStats]);
+  }, [progress]);
 
   const activeLesson = getLessonById(activeLessonId);
   const currentLessonIndex = LESSONS.findIndex((l) => l.id === activeLessonId);
@@ -175,12 +129,23 @@ export default function App() {
     0
   );
 
+  const earnedBadgesCount = REWARD_BADGES.filter(
+    (b) => b.evaluate(progress).earned
+  ).length;
+
   function handleSolveQuestion(questionId: string) {
-    setSolvedLog((prev) =>
-      prev[questionId]
-        ? prev
-        : { ...prev, [questionId]: new Date().toISOString() }
-    );
+    setProgress((prev) => {
+      if (prev.solvedLog[questionId]) return prev;
+      const streak = computeNextStreak(prev.streakDays, prev.lastStudyDate);
+      return {
+        ...prev,
+        solvedLog: {
+          ...prev.solvedLog,
+          [questionId]: new Date().toISOString(),
+        },
+        ...streak,
+      };
+    });
   }
 
   function handleRecordGameWin(
@@ -188,32 +153,65 @@ export default function App() {
     track: TrackType,
     score: number
   ) {
-    setGameStats((prev) => {
-      const existing = prev[gameId] ?? { wins: 0, bestScore: 0 };
+    setProgress((prev) => {
+      const existing = prev.gameStats[gameId] ?? { wins: 0, bestScore: 0 };
+      const streak = computeNextStreak(prev.streakDays, prev.lastStudyDate);
+      const entryKey = `game:${track}:${gameId}:${Date.now()}`;
       return {
         ...prev,
-        [gameId]: {
-          wins: existing.wins + 1,
-          bestScore: Math.max(existing.bestScore, score),
+        gameStats: {
+          ...prev.gameStats,
+          [gameId]: {
+            wins: existing.wins + 1,
+            bestScore: Math.max(existing.bestScore, score),
+          },
         },
+        solvedLog: {
+          ...prev.solvedLog,
+          [entryKey]: new Date().toISOString(),
+        },
+        ...streak,
       };
     });
-    const entryKey = `game:${track}:${gameId}:${Date.now()}`;
-    setSolvedLog((prev) => ({
+  }
+
+  function handleBeginnerStepChange(step: number) {
+    setProgress((prev) =>
+      prev.beginnerStep === step ? prev : { ...prev, beginnerStep: step }
+    );
+  }
+
+  function handleBeginnerComplete() {
+    setProgress((prev) => {
+      const streak = computeNextStreak(prev.streakDays, prev.lastStudyDate);
+      return { ...prev, beginnerDone: true, beginnerStep: 5, ...streak };
+    });
+  }
+
+  function handleWorksheetDownloaded() {
+    setProgress((prev) => ({
       ...prev,
-      [entryKey]: new Date().toISOString(),
+      worksheetsDownloaded: prev.worksheetsDownloaded + 1,
     }));
   }
+
+  function handleUpdateStudentName(name: string) {
+    setProgress((prev) => ({ ...prev, studentName: name }));
+  }
+
+  const dismissToast = useCallback(() => setToastBadge(null), []);
 
   function openLesson(id: LessonId) {
     setActiveLessonId(id);
     setView('lesson');
+    setProgress((prev) => ({ ...prev, lastView: 'lesson', lastLessonId: id }));
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function openBeginnerGuide() {
     setView('beginner');
+    setProgress((prev) => ({ ...prev, lastView: 'beginner' }));
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -221,6 +219,7 @@ export default function App() {
   function openGames(gameId: GameId | null = null) {
     setInitialGameId(gameId);
     setView('games');
+    setProgress((prev) => ({ ...prev, lastView: 'games' }));
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -228,6 +227,7 @@ export default function App() {
   function openExploreWithFilter(filter: 'all' | TrackType, scrollToGrid = false) {
     setTrackFilter(filter);
     setView('explore');
+    setProgress((prev) => ({ ...prev, lastView: 'explore' }));
     setMobileMenuOpen(false);
     if (scrollToGrid) {
       window.setTimeout(() => {
@@ -240,6 +240,7 @@ export default function App() {
 
   function openPractice() {
     setView('practice');
+    setProgress((prev) => ({ ...prev, lastView: 'practice' }));
     setMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -271,7 +272,11 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
       {/* Strict 3-Zone Top Bar */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200">
+      <header
+        className={`sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200 ${
+          worksheetLessonId ? 'print:hidden' : ''
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between gap-8">
           {/* Zone 1: Single text element wordmark */}
           <button
@@ -411,7 +416,11 @@ export default function App() {
       </header>
 
       {/* Main Content Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-6 lg:px-8 py-8 lg:py-12">
+      <main
+        className={`flex-1 max-w-7xl w-full mx-auto px-6 lg:px-8 py-8 lg:py-12 ${
+          worksheetLessonId ? 'print:hidden' : ''
+        }`}
+      >
         {view === 'explore' && (
           <div className="space-y-12">
             {/* Daily Torah Math Wisdom Banner powered by Gemini */}
@@ -421,7 +430,8 @@ export default function App() {
             <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
               <div className="lg:col-span-6 flex flex-col justify-center">
                 <p className="text-xs font-medium text-slate-500 mb-3">
-                  Torah, Gemara &amp; Shulchan Aruch Math Studio · Total Beginners to Ages 12
+                  {studentName ? `Shalom, ${studentName}! · ` : ''}
+                  Torah, Gemara &amp; Shulchan Aruch Math Studio · Offline Ready · Autosaved Locally
                 </p>
                 <h1 className="text-4xl lg:text-5xl font-bold text-slate-900 leading-[1.12] tracking-tight mb-5">
                   Hands-On Math Through Torah, Gemara &amp; Shulchan Aruch
@@ -476,11 +486,29 @@ export default function App() {
             >
               <div>
                 <p className="font-mono text-2xl font-bold text-slate-900 tabular-nums">
-                  {LESSONS.length} Lessons
+                  {solvedIds.length} / {ALL_QUIZ_QUESTIONS.length}
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
-                  Torah, Gemara &amp; Shulchan Aruch sandboxes
+                  Math challenges solved so far
                 </p>
+              </div>
+              <div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    document
+                      .getElementById('badges-shelf-heading')
+                      ?.scrollIntoView({ behavior: 'smooth' })
+                  }
+                  className="text-left group cursor-pointer"
+                >
+                  <p className="font-mono text-2xl font-bold text-amber-700 group-hover:text-amber-800 tabular-nums">
+                    {earnedBadgesCount} / {REWARD_BADGES.length} Badges
+                  </p>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Collectible medals unlocked →
+                  </p>
+                </button>
               </div>
               <div>
                 <p className="font-mono text-2xl font-bold text-blue-700 tabular-nums">
@@ -493,19 +521,11 @@ export default function App() {
                 </p>
               </div>
               <div>
-                <p className="font-mono text-2xl font-bold text-slate-900 tabular-nums">
-                  {solvedIds.length} / {ALL_QUIZ_QUESTIONS.length}
-                </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  Lesson challenges solved so far
-                </p>
-              </div>
-              <div>
                 <p className="font-mono text-2xl font-bold text-emerald-700 tabular-nums">
                   {completedLessonsCount} / {LESSONS.length}
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
-                  Full lessons mastered with 3 stars
+                  Full lessons mastered (5 stars each)
                 </p>
               </div>
             </section>
@@ -694,7 +714,9 @@ export default function App() {
                                   className="w-4 h-4 text-emerald-700"
                                   aria-hidden="true"
                                 />
-                                <span className="text-emerald-700">Mastered (3/3)</span>
+                                <span className="text-emerald-700">
+                                  Mastered ({lesson.challenges.length}/{lesson.challenges.length})
+                                </span>
                               </>
                             ) : (
                               <>
@@ -825,6 +847,12 @@ export default function App() {
               </article>
             </section>
 
+            {/* Reward Badges Trophy Shelf, Kid Name & Offline App Install */}
+            <BadgesShowcase
+              progress={progress}
+              onUpdateName={handleUpdateStudentName}
+            />
+
             {/* Weekly Progress Bar Chart (Recharts) at Bottom of Explore Screen */}
             <WeeklyProgressChart
               solvedLog={solvedLog}
@@ -877,28 +905,41 @@ export default function App() {
               </div>
             </div>
 
-            {/* Lesson Title & Story Hook */}
-            <header className="max-w-4xl space-y-3">
-              <p className="text-xs font-medium text-slate-500">
-                Lesson 0{activeLesson.order} ·{' '}
-                {formatTrackLabel(activeLesson.track)} ·{' '}
-                {activeLesson.sourceRef} · {activeLesson.mathTopic} ·{' '}
-                {activeLesson.ageRange}
-              </p>
-              <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-                <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
-                  {activeLesson.title}
-                </h1>
-                <span
-                  dir="rtl"
-                  className="text-xl lg:text-2xl font-semibold text-blue-800"
-                >
-                  {activeLesson.hebrewTitle}
-                </span>
+            {/* Lesson Title, Story Hook & Printable PDF Worksheet Trigger */}
+            <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+              <div className="max-w-3xl space-y-3">
+                <p className="text-xs font-medium text-slate-500">
+                  Lesson 0{activeLesson.order} ·{' '}
+                  {formatTrackLabel(activeLesson.track)} ·{' '}
+                  {activeLesson.sourceRef} · {activeLesson.mathTopic} ·{' '}
+                  {activeLesson.ageRange}
+                </p>
+                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                  <h1 className="text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">
+                    {activeLesson.title}
+                  </h1>
+                  <span
+                    dir="rtl"
+                    className="text-xl lg:text-2xl font-semibold text-blue-800"
+                  >
+                    {activeLesson.hebrewTitle}
+                  </span>
+                </div>
+                <p className="text-base text-slate-600 leading-relaxed">
+                  {activeLesson.storyHook}
+                </p>
               </div>
-              <p className="text-base text-slate-600 leading-relaxed max-w-3xl">
-                {activeLesson.storyHook}
-              </p>
+
+              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setWorksheetLessonId(activeLesson.id)}
+                  className="px-4 py-2.5 rounded-lg text-xs font-semibold text-slate-800 bg-white border border-slate-300 hover:border-blue-600 hover:text-blue-700 transition-colors inline-flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  <FileText className="w-4 h-4 text-blue-700" aria-hidden="true" />
+                  <span>Printable PDF Worksheet</span>
+                </button>
+              </div>
             </header>
 
             {/* Two-Zone Interactive Sandbox */}
@@ -918,13 +959,59 @@ export default function App() {
                 nextLesson ? nextLesson.title : 'Practice Quiz Arena'
               }
             />
+
+            {/* Offline Practice PDF Worksheet Strip */}
+            <section
+              aria-label="Offline Printable Worksheet"
+              className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-5"
+            >
+              <div className="space-y-1 max-w-2xl">
+                <p className="text-xs font-medium text-slate-500">
+                  Offline Study Sheet · US Letter PDF · Includes Optional Answer Key
+                </p>
+                <h2 className="text-lg font-bold text-slate-900">
+                  Take “{activeLesson.title}” Offline
+                </h2>
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Print or download a clean PDF worksheet with this lesson’s main math concept, key formula, a step-by-step worked example, and 5 paper-and-pencil practice problems with workspace boxes.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setWorksheetLessonId(activeLesson.id)}
+                  className="px-4 py-2.5 rounded-lg text-xs font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 transition-colors inline-flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  <FileText className="w-4 h-4 text-blue-700" aria-hidden="true" />
+                  <span>Preview &amp; Customize</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    downloadLessonWorksheetPdf(activeLesson, {
+                      includeAnswerKey: true,
+                      includeHints: true,
+                      studentName,
+                    });
+                    handleWorksheetDownloaded();
+                  }}
+                  className="px-4 py-2.5 rounded-lg text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 transition-colors inline-flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  <Download className="w-4 h-4" aria-hidden="true" />
+                  <span>Download PDF</span>
+                </button>
+              </div>
+            </section>
           </div>
         )}
 
         {view === 'beginner' && (
           <BeginnerTutorial
             completed={beginnerDone}
-            onComplete={() => setBeginnerDone(true)}
+            initialStep={beginnerStep}
+            onStepChange={handleBeginnerStepChange}
+            onComplete={handleBeginnerComplete}
             onOpenGames={() => openGames(null)}
             onOpenLesson={openLesson}
           />
@@ -948,12 +1035,17 @@ export default function App() {
       </main>
 
       {/* Quiet Editorial Footer */}
-      <footer className="border-t border-slate-200 bg-white mt-12">
+      <footer
+        className={`border-t border-slate-200 bg-white mt-12 ${
+          worksheetLessonId ? 'print:hidden' : ''
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>
-            Cheshbon — Interactive Torah, Gemara &amp; Shulchan Aruch Math Studio for Kids
+            Cheshbon — Offline-Ready Torah, Gemara &amp; Shulchan Aruch Math Studio for Kids · Progress autosaved locally
           </p>
           <div className="flex flex-wrap items-center gap-5">
+            <PWAInstallButton />
             <button
               type="button"
               onClick={openBeginnerGuide}
@@ -982,13 +1074,17 @@ export default function App() {
             >
               Practice Quiz
             </button>
-            {(Object.keys(solvedLog).length > 0 || beginnerDone || totalGameWins > 0) && (
+            {(Object.keys(solvedLog).length > 0 ||
+              beginnerDone ||
+              totalGameWins > 0 ||
+              progress.worksheetsDownloaded > 0 ||
+              Boolean(studentName)) && (
               <button
                 type="button"
                 onClick={() => {
-                  setSolvedLog({});
-                  setBeginnerDone(false);
-                  setGameStats({});
+                  clearLocalProgress();
+                  setProgress({ ...DEFAULT_PROGRESS });
+                  setView('explore');
                 }}
                 className="text-rose-700 hover:text-rose-800 transition-colors cursor-pointer"
               >
@@ -998,6 +1094,18 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {worksheetLessonId && (
+        <WorksheetModal
+          lesson={getLessonById(worksheetLessonId)}
+          studentName={studentName}
+          onPdfDownloaded={handleWorksheetDownloaded}
+          onClose={() => setWorksheetLessonId(null)}
+        />
+      )}
+
+      <OfflineIndicator />
+      <BadgeUnlockToast badge={toastBadge} onDismiss={dismissToast} />
     </div>
   );
 }

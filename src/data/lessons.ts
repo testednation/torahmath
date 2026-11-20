@@ -156,6 +156,32 @@ export const LESSONS: LessonDefinition[] = [
         explanation:
           'They both use 36 candles! Adding 1 + 2 + ... + 8 is the exact same sum as 8 + 7 + ... + 1.',
       },
+      {
+        id: 'chanukah-4',
+        lessonId: 'chanukah-candles',
+        track: 'torah',
+        sourceRef: 'Shabbat 21b',
+        question:
+          'Suppose your family lights TWO menorahs every night for all 8 nights (including a Shamash on each). How many candles do you need in total?',
+        options: ['72 candles', '80 candles', '88 candles', '96 candles'],
+        correctIndex: 2,
+        hint: 'One full menorah uses 44 candles. Double 44 (44 + 44)!',
+        explanation:
+          'One menorah uses 44 candles (36 + 8 Shamash). Two menorahs use 44 + 44 = 88 candles!',
+      },
+      {
+        id: 'chanukah-5',
+        lessonId: 'chanukah-candles',
+        track: 'torah',
+        sourceRef: 'Shabbat 21b',
+        question:
+          'How many night candles do you light during the LAST 4 nights of Chanukah (Nights 5, 6, 7, and 8 combined, not counting the Shamash)?',
+        options: ['22 candles', '26 candles', '30 candles', '36 candles'],
+        correctIndex: 1,
+        hint: 'Pair the ends: (5 + 8 = 13) and (6 + 7 = 13). Then add 13 + 13!',
+        explanation:
+          '5 + 6 + 7 + 8 = 26 candles! Pairing 5 + 8 = 13 and 6 + 7 = 13 makes mental addition super quick.',
+      },
     ],
   },
   {
@@ -244,6 +270,37 @@ export const LESSONS: LessonDefinition[] = [
         explanation:
           '300 ÷ 50 = 6. A 6-to-1 length-to-width ratio is actually very close to modern cargo ships for stability on waves!',
       },
+      {
+        id: 'ark-4',
+        lessonId: 'noahs-ark',
+        track: 'torah',
+        sourceRef: 'Bereishit 6:15',
+        question:
+          "Noah's Ark is 300 amot long, 50 amot wide, and 30 amot high. What is the TOTAL 3D volume (Length × Width × Height)?",
+        options: [
+          '45,000 cubic amot',
+          '150,000 cubic amot',
+          '450,000 cubic amot',
+          '900,000 cubic amot',
+        ],
+        correctIndex: 2,
+        hint: 'Multiply one deck’s area (15,000) by the height (30). Think 15 × 3 = 45, then add four zeros!',
+        explanation:
+          'Volume = 300 × 50 × 30 = 15,000 × 30 = 450,000 cubic amot!',
+      },
+      {
+        id: 'ark-5',
+        lessonId: 'noahs-ark',
+        track: 'torah',
+        sourceRef: 'Bereishit 6:15',
+        question:
+          'If 1 amah is about 1.5 feet (1 and a half feet), about how tall is the 30-amah Ark in feet?',
+        options: ['30 feet', '45 feet', '60 feet', '90 feet'],
+        correctIndex: 1,
+        hint: 'Take 30 feet plus half of 30 (which is 15 feet): 30 + 15.',
+        explanation:
+          '30 × 1.5 = 30 + 15 = 45 feet tall—roughly as high as a 4-story building!',
+      },
     ],
   },
   {
@@ -322,6 +379,32 @@ export const LESSONS: LessonDefinition[] = [
         hint: 'Only the 1/4 that Shimon claims is disputed. What is half of 1/4?',
         explanation:
           'Reuven automatically keeps the undisputed 3/4. They split the disputed 1/4 in half, so Shimon gets 1/8 and Reuven gets 7/8!',
+      },
+      {
+        id: 'tallit-4',
+        lessonId: 'tallit-fractions',
+        track: 'gemara',
+        sourceRef: 'Bava Metzia 2a',
+        question:
+          'Reuven and Shimon BOTH claim ALL of a tallit worth 80 silver zuz. How many zuz does each friend get?',
+        options: ['20 zuz each', '30 zuz each', '40 zuz each', '60 zuz each'],
+        correctIndex: 2,
+        hint: 'When both friends claim the whole tallit, they split it 1/2 each (80 ÷ 2).',
+        explanation:
+          'Since the entire tallit is disputed, each friend receives 1/2 of 80 zuz = 40 zuz!',
+      },
+      {
+        id: 'tallit-5',
+        lessonId: 'tallit-fractions',
+        track: 'gemara',
+        sourceRef: 'Bava Metzia 2a',
+        question:
+          'Reuven claims ALL of a tallit and Shimon claims HALF. If the tallit is worth 200 silver zuz, how many zuz does REUVEN receive?',
+        options: ['100 zuz', '125 zuz', '150 zuz', '175 zuz'],
+        correctIndex: 2,
+        hint: 'Reuven gets 3/4 of 200 zuz. First find 1/4 (200 ÷ 4 = 50), then multiply 3 × 50.',
+        explanation:
+          '1/4 of 200 is 50 zuz (Shimon’s share). Reuven gets 3/4 = 3 × 50 = 150 zuz!',
       },
     ],
   },
@@ -407,6 +490,32 @@ export const LESSONS: LessonDefinition[] = [
         explanation:
           'Every circle—big or small—has an exact circumference of π × d ≈ 3.14159 × d, which is always just a bit longer than 3 × d.',
       },
+      {
+        id: 'sukkah-4',
+        lessonId: 'sukkah-geometry',
+        track: 'gemara',
+        sourceRef: 'Eruvin 14a · Kings I 7:23',
+        question:
+          'King Solomon built a round copper basin that was 10 amot across (diameter). Using the Gemara’s rule (C ≈ 3 × d), about how many amot was it around?',
+        options: ['20 amot', '30 amot', '40 amot', '100 amot'],
+        correctIndex: 1,
+        hint: 'Multiply the diameter (10 amot) by 3.',
+        explanation:
+          '3 × 10 = 30 amot! That is the exact famous measurement written in Kings I 7:23 and discussed in Eruvin 14a.',
+      },
+      {
+        id: 'sukkah-5',
+        lessonId: 'sukkah-geometry',
+        track: 'gemara',
+        sourceRef: 'Sukkah 8a',
+        question:
+          'A square Sukkah has sides of 5 tefachim each. Using Sukkah 8a’s diagonal rule (Diagonal ≈ 1.4 × side), about how long is its diagonal?',
+        options: ['6 tefachim', '7 tefachim', '8 tefachim', '10 tefachim'],
+        correctIndex: 1,
+        hint: 'Multiply 5 by 1 and 2/5: 5 × 1 = 5, plus 5 × (2/5) = 2. What is 5 + 2?',
+        explanation:
+          '5 × 1.4 = 7 tefachim! Notice how cleanly 1 and 2/5 (7/5) multiplies with 5.',
+      },
     ],
   },
   {
@@ -489,6 +598,32 @@ export const LESSONS: LessonDefinition[] = [
         hint: 'How many groups of 60 fit into 240? Divide 240 ÷ 60.',
         explanation: '240 ÷ 60 = 4 spoons! Since 4 × 60 = 240, up to 4 spoons keep a 60:1 ratio.',
       },
+      {
+        id: 'ratio-4',
+        lessonId: 'batel-bshishim',
+        track: 'gemara',
+        sourceRef: 'Chullin 98a',
+        question:
+          'If 5 spoons of non-kosher sauce accidentally spill into a huge catering pot of soup, how many spoons of kosher soup are needed for a 60:1 ratio?',
+        options: ['180 spoons', '240 spoons', '300 spoons', '360 spoons'],
+        correctIndex: 2,
+        hint: 'Multiply 5 × 60 (think 5 × 6 = 30, then add one zero!).',
+        explanation:
+          '5 × 60 = 300 spoons of kosher soup! 300 : 5 simplifies right back to 60 : 1.',
+      },
+      {
+        id: 'ratio-5',
+        lessonId: 'batel-bshishim',
+        track: 'gemara',
+        sourceRef: 'Chullin 98a',
+        question:
+          'A pot has 150 spoons of kosher soup, and 3 accidental spoons fall in (which require 180 spoons). How many MORE spoons would be needed to reach 60:1?',
+        options: ['10 more spoons', '20 more spoons', '30 more spoons', '60 more spoons'],
+        correctIndex: 2,
+        hint: 'Subtract what you already have from what you need: 180 − 150.',
+        explanation:
+          '3 × 60 = 180 spoons needed, and 180 − 150 = 30 spoons short of the 60:1 ratio!',
+      },
     ],
   },
   {
@@ -567,6 +702,32 @@ export const LESSONS: LessonDefinition[] = [
         hint: 'Both words equal 13. What is 13 + 13?',
         explanation:
           '1 + 5 + 2 + 5 = 13, so אהבה also equals 13! Together, 13 + 13 = 26.',
+      },
+      {
+        id: 'gem-4',
+        lessonId: 'gematria-workshop',
+        track: 'torah',
+        sourceRef: 'Hebrew Gematria',
+        question:
+          'The word אמת (Emet, meaning "Truth") is spelled Alef (1) + Mem (40) + Tav (400). What is the Gematria of Emet?',
+        options: ['414', '441', '451', '541'],
+        correctIndex: 1,
+        hint: 'Put the place values together: 4 Hundreds + 4 Tens + 1 One.',
+        explanation:
+          '400 + 40 + 1 = 441! Fun math bonus: 441 is also 21 × 21 (a perfect square!).',
+      },
+      {
+        id: 'gem-5',
+        lessonId: 'gematria-workshop',
+        track: 'torah',
+        sourceRef: 'Hebrew Gematria',
+        question:
+          'The word תורה (Torah) is spelled Tav (400) + Vav (6) + Resh (200) + Hei (5). What is the Gematria of Torah?',
+        options: ['511', '601', '611', '621'],
+        correctIndex: 2,
+        hint: 'Group the Hundreds first (400 + 200 = 600), then add the Ones (6 + 5 = 11).',
+        explanation:
+          '400 + 200 = 600, and 6 + 5 = 11, so 600 + 11 = 611! In Makkot 23b, the Sages note Moshe taught us 611 mitzvot plus the first 2 heard directly = 613!',
       },
     ],
   },
@@ -647,6 +808,32 @@ export const LESSONS: LessonDefinition[] = [
         explanation:
           '840 ÷ 12 = 70 minutes (1 hour and 10 minutes) per Halachic Hour in summer!',
       },
+      {
+        id: 'zman-4',
+        lessonId: 'shaot-zmaniyot',
+        track: 'shulchan-aruch',
+        sourceRef: 'Orach Chaim 89:1',
+        question:
+          'On a balanced spring day with 12 hours (720 minutes) of daylight, sunrise is at 6:00 AM. When is Latest Shacharit (after 4 Halachic Hours)?',
+        options: ['9:00 AM', '9:30 AM', '10:00 AM', '11:00 AM'],
+        correctIndex: 2,
+        hint: 'On a 12-hour day, each Halachic Hour is 60 minutes (1 full clock hour). Count 4 hours forward from 6:00 AM!',
+        explanation:
+          '720 ÷ 12 = 60 minutes per Halachic Hour. Four hours after 6:00 AM is 10:00 AM!',
+      },
+      {
+        id: 'zman-5',
+        lessonId: 'shaot-zmaniyot',
+        track: 'shulchan-aruch',
+        sourceRef: 'Orach Chaim 58:1',
+        question:
+          'Whether it is a short winter day or a long summer day, which Halachic Hour is ALWAYS Chatzot (exact Midday, halfway through daylight)?',
+        options: ['Hour 3', 'Hour 4', 'Hour 6', 'Hour 8'],
+        correctIndex: 2,
+        hint: 'Every day is divided into 12 equal Halachic Hours. What is half of 12?',
+        explanation:
+          '12 ÷ 2 = 6! Hour 6 is always the exact midpoint between sunrise and sunset in every season.',
+      },
     ],
   },
   {
@@ -726,6 +913,32 @@ export const LESSONS: LessonDefinition[] = [
         explanation:
           '10% of $50 is $5 for Tzedakah, leaving $50 − $5 = $45 (which is 90% of your earnings)!',
       },
+      {
+        id: 'maaser-4',
+        lessonId: 'maaser-percent',
+        track: 'shulchan-aruch',
+        sourceRef: 'Yoreh Deah 249:1',
+        question:
+          'You earn $140 from a summer lemonade stand. Using the Drop-the-Zero shortcut, how much is 10% Maaser?',
+        options: ['$10', '$14', '$24', '$28'],
+        correctIndex: 1,
+        hint: 'Divide $140 by 10 by dropping the trailing zero.',
+        explanation:
+          '$140 ÷ 10 = $14 for Tzedakah! You keep $140 − $14 = $126.',
+      },
+      {
+        id: 'maaser-5',
+        lessonId: 'maaser-percent',
+        track: 'shulchan-aruch',
+        sourceRef: 'Yoreh Deah 249:1',
+        question:
+          'You earn $100 and give generous Chomesh (20%) to Tzedakah. How much money do you KEEP?',
+        options: ['$20', '$70', '$80', '$90'],
+        correctIndex: 2,
+        hint: '20% of $100 is $20. Subtract $20 from $100!',
+        explanation:
+          '$20 goes to the Tzedakah pushka and you keep $100 − $20 = $80 (which is 80%)!',
+      },
     ],
   },
   {
@@ -804,6 +1017,32 @@ export const LESSONS: LessonDefinition[] = [
         hint: 'Check which height is ABOVE the 2/3 mark (48 in) and at least 3.5 inches BELOW the 72-inch top!',
         explanation:
           '52 inches is above the 48-inch (2/3) line and safely more than 1 tefach below the 72-inch top lintel!',
+      },
+      {
+        id: 'mez-4',
+        lessonId: 'mezuzah-thirds',
+        track: 'shulchan-aruch',
+        sourceRef: 'Yoreh Deah 289:2',
+        question:
+          'A standard home doorway is 84 inches tall (each third is 28 inches). At what height from the floor does the TOP THIRD (the 2/3 mark) start?',
+        options: ['28 inches', '42 inches', '56 inches', '70 inches'],
+        correctIndex: 2,
+        hint: 'Two thirds is 2 × 28 inches (28 + 28).',
+        explanation:
+          '28 + 28 = 56 inches from the floor! That is right where the kosher Top Third begins.',
+      },
+      {
+        id: 'mez-5',
+        lessonId: 'mezuzah-thirds',
+        track: 'shulchan-aruch',
+        sourceRef: 'Yoreh Deah 289:2',
+        question:
+          'Yoreh Deah 289:2 teaches that a Mezuzah must stay at least 1 tefach (~3.5 inches) BELOW the top lintel. On an 84-inch door, what is the highest kosher spot?',
+        options: ['74.5 inches', '80.5 inches', '83.5 inches', '84 inches'],
+        correctIndex: 1,
+        hint: 'Subtract 3.5 inches from 84 inches: 84 − 3 = 81, then take away 0.5 more!',
+        explanation:
+          '84 − 3.5 = 80.5 inches! Hanging it between 56 in and 80.5 in keeps it inside the kosher top third with 1 tefach to spare.',
       },
     ],
   },

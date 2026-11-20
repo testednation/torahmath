@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <rect width="128" height="128" rx="28" fill="#1D4ED8"/>
+  <!-- Stylized Golden Menorah -->
+  <rect x="60" y="34" width="8" height="62" rx="4" fill="#F59E0B"/>
+  <rect x="44" y="92" width="40" height="8" rx="4" fill="#F59E0B"/>
+  <path d="M26 48 C26 76 64 78 64 78 C64 78 102 76 102 48" stroke="#F59E0B" stroke-width="6" stroke-linecap="round"/>
+  <path d="M40 48 C40 66 64 68 64 68 C64 68 88 66 88 48" stroke="#F59E0B" stroke-width="5.5" stroke-linecap="round"/>
+  <!-- Flames -->
+  <ellipse cx="64" cy="24" rx="4.5" ry="7" fill="#FDE68A"/>
+  <ellipse cx="26" cy="39" rx="3.5" ry="5.5" fill="#FDE68A"/>
+  <ellipse cx="40" cy="39" rx="3.5" ry="5.5" fill="#FDE68A"/>
+  <ellipse cx="88" cy="39" rx="3.5" ry="5.5" fill="#FDE68A"/>
+  <ellipse cx="102" cy="39" rx="3.5" ry="5.5" fill="#FDE68A"/>
+  <!-- Crisp Math + and = -->
+  <path d="M31 86 H47 M39 78 V94" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M81 82 H97 M81 91 H97" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+</svg>

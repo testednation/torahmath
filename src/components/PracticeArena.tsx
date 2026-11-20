@@ -17,6 +17,7 @@ import {
   type TrackType,
 } from '../data/lessons';
 import { ResilientImage } from './ResilientImage';
+import { playTap, playSuccess, playTryAgain } from '../utils/soundFx';
 
 interface PracticeArenaProps {
   solvedIds: string[];
@@ -47,6 +48,7 @@ export function PracticeArena({
   const totalQuestions = ALL_QUIZ_QUESTIONS.length;
 
   function handleFilterChange(nextFilter: 'all' | TrackType) {
+    playTap();
     setTrackFilter(nextFilter);
     setQuestionIdx(0);
     setSelectedIdx(null);
@@ -58,11 +60,15 @@ export function PracticeArena({
     if (selectedIdx === null) return;
     setSubmitted(true);
     if (selectedIdx === currentQ.correctIndex) {
+      playSuccess();
       onSolveQuestion(currentQ.id);
+    } else {
+      playTryAgain();
     }
   }
 
   function handleNext() {
+    playTap();
     const next = (safeIdx + 1) % filteredQuestions.length;
     setQuestionIdx(next);
     setSelectedIdx(null);
@@ -71,6 +77,7 @@ export function PracticeArena({
   }
 
   function handleJumpTo(idx: number) {
+    playTap();
     setQuestionIdx(idx);
     setSelectedIdx(null);
     setSubmitted(false);
@@ -89,7 +96,7 @@ export function PracticeArena({
             Test Your Torah, Gemara &amp; Shulchan Aruch Math Skills
           </h1>
           <p className="text-base text-slate-600 leading-relaxed max-w-xl mb-6">
-            Practice addition patterns, 3D volume, Tallit fractions, circles, 1-to-60 ratios, Gematria, Halachic daylight hours, 10% Maaser, and Mezuzah thirds—with helpful hints on every question.
+            Practice addition patterns, 3D volume, Tallit fractions, circles, 1-to-60 ratios, Gematria, Halachic daylight hours, 10% Maaser, and Mezuzah thirds—with {totalQuestions} kid-friendly challenges and hints on every question.
           </p>
 
           {/* Interactive Track Filter */}
@@ -160,20 +167,25 @@ export function PracticeArena({
             {currentQ.question}
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
             {currentQ.options.map((opt, idx) => {
               const isSelected = selectedIdx === idx;
               const showRight = submitted && idx === currentQ.correctIndex && isCorrect;
               const showWrong = submitted && isSelected && idx !== currentQ.correctIndex;
 
               let style =
-                'border-slate-200 bg-white text-slate-800 hover:border-slate-300 hover:bg-slate-50';
+                'border-slate-200 bg-white text-slate-800 hover:border-blue-400 hover:bg-blue-50/40';
+              let letterStyle = 'bg-slate-100 text-slate-600';
+
               if (showRight) {
-                style = 'border-emerald-600 bg-emerald-50 text-emerald-950 font-medium';
+                style = 'border-emerald-600 bg-emerald-50 text-emerald-950 font-semibold';
+                letterStyle = 'bg-emerald-600 text-white';
               } else if (showWrong) {
-                style = 'border-rose-600 bg-rose-50 text-rose-950 font-medium';
+                style = 'border-rose-600 bg-rose-50 text-rose-950 font-semibold';
+                letterStyle = 'bg-rose-600 text-white';
               } else if (isSelected) {
-                style = 'border-blue-700 bg-blue-50 text-blue-950 font-medium';
+                style = 'border-blue-700 bg-blue-50 text-blue-950 font-semibold';
+                letterStyle = 'bg-blue-700 text-white';
               }
 
               return (
@@ -182,19 +194,22 @@ export function PracticeArena({
                   type="button"
                   onClick={() => {
                     if (submitted && isCorrect) return;
+                    playTap();
                     setSelectedIdx(idx);
                     if (submitted) setSubmitted(false);
                   }}
-                  className={`text-left px-4 py-3.5 rounded-lg border text-sm transition-colors flex items-center justify-between gap-3 cursor-pointer ${style}`}
+                  className={`min-h-[58px] text-left px-4 py-3.5 rounded-xl border-2 text-base transition-all flex items-center justify-between gap-3 cursor-pointer ${style}`}
                 >
                   <span className="flex items-center gap-3">
-                    <span className="font-mono text-xs text-slate-500">
-                      {String.fromCharCode(65 + idx)}.
+                    <span
+                      className={`w-7 h-7 rounded-lg font-mono text-xs font-bold flex items-center justify-center shrink-0 tabular-nums transition-colors ${letterStyle}`}
+                    >
+                      {String.fromCharCode(65 + idx)}
                     </span>
                     <span>{opt}</span>
                   </span>
-                  {showRight && <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" aria-hidden="true" />}
-                  {showWrong && <XCircle className="w-4 h-4 text-rose-700 shrink-0" aria-hidden="true" />}
+                  {showRight && <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0" aria-hidden="true" />}
+                  {showWrong && <XCircle className="w-5 h-5 text-rose-700 shrink-0" aria-hidden="true" />}
                 </button>
               );
             })}
@@ -206,9 +221,9 @@ export function PracticeArena({
                 type="button"
                 onClick={handleCheck}
                 disabled={selectedIdx === null}
-                className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-blue-700 hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                className="px-6 py-3 rounded-xl text-sm font-semibold text-white bg-blue-700 hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors whitespace-nowrap shrink-0 cursor-pointer"
               >
-                Check Answer
+                Check My Answer
               </button>
             )}
 
@@ -216,10 +231,11 @@ export function PracticeArena({
               <button
                 type="button"
                 onClick={() => {
+                  playTap();
                   setSelectedIdx(null);
                   setSubmitted(false);
                 }}
-                className="px-4 py-2.5 rounded-lg text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
+                className="px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" aria-hidden="true" />
                 <span>Try Again</span>
@@ -229,18 +245,21 @@ export function PracticeArena({
             {!isCorrect && (
               <button
                 type="button"
-                onClick={() => setShowHint((h) => !h)}
-                className="px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
+                onClick={() => {
+                  playTap();
+                  setShowHint((h) => !h);
+                }}
+                className="px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
               >
-                <HelpCircle className="w-4 h-4" aria-hidden="true" />
-                <span>{showHint ? 'Hide Hint' : 'Show Hint'}</span>
+                <HelpCircle className="w-4 h-4 text-amber-600" aria-hidden="true" />
+                <span>{showHint ? 'Hide Hint' : 'Need a Hint?'}</span>
               </button>
             )}
 
             <button
               type="button"
               onClick={handleNext}
-              className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
+              className={`px-6 py-3 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
                 isCorrect
                   ? 'bg-emerald-700 text-white hover:bg-emerald-800'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200 ml-auto'
@@ -252,8 +271,8 @@ export function PracticeArena({
           </div>
 
           {showHint && !isCorrect && (
-            <div className="mt-4 p-4 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-950">
-              <span className="font-semibold">Hint: </span>
+            <div className="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-950">
+              <span className="font-bold">Friendly Hint: </span>
               {currentQ.hint}
             </div>
           )}
@@ -261,7 +280,7 @@ export function PracticeArena({
           {submitted && (
             <div
               role="status"
-              className={`mt-4 p-4 rounded-lg border text-sm flex items-start gap-3 ${
+              className={`mt-4 p-4 rounded-xl border text-sm flex items-start gap-3 ${
                 isCorrect
                   ? 'bg-emerald-50 border-emerald-200 text-emerald-950'
                   : 'bg-rose-50 border-rose-200 text-rose-950'
@@ -273,13 +292,13 @@ export function PracticeArena({
                 <XCircle className="w-5 h-5 text-rose-700 shrink-0 mt-0.5" aria-hidden="true" />
               )}
               <div>
-                <p className="font-semibold mb-0.5">
-                  {isCorrect ? 'Spot on!' : 'Give it another try!'}
+                <p className="font-bold mb-0.5">
+                  {isCorrect ? 'Kol HaKavod! Spot on!' : 'Good try! Give it another shot.'}
                 </p>
                 <p className="leading-relaxed">
                   {isCorrect
                     ? currentQ.explanation
-                    : 'Click Show Hint or open the interactive lesson sandbox to explore the model visually.'}
+                    : 'Tap “Need a Hint?” or open the interactive lesson sandbox to explore the model visually.'}
                 </p>
               </div>
             </div>

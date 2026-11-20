@@ -22,6 +22,8 @@ import {
 
 interface BeginnerTutorialProps {
   completed: boolean;
+  initialStep?: number;
+  onStepChange?: (step: number) => void;
   onComplete: () => void;
   onOpenGames: () => void;
   onOpenLesson: (lessonId: LessonId) => void;
@@ -52,11 +54,15 @@ const NUMBER_WORDS = [
 
 export function BeginnerTutorial({
   completed,
+  initialStep = 0,
+  onStepChange,
   onComplete,
   onOpenGames,
   onOpenLesson,
 }: BeginnerTutorialProps) {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(() =>
+    Math.max(0, Math.min(5, initialStep))
+  );
   const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
 
   // Step 1 (Total Beginner): Counting 1 to 10 on the Two Tablets (Shemot 20)
@@ -243,6 +249,7 @@ export function BeginnerTutorial({
     clearActiveTimer();
     playTap();
     setStep(nextStep);
+    onStepChange?.(nextStep);
     if (nextStep === 5) {
       if (!completed) {
         onComplete();
