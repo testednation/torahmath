@@ -13,6 +13,7 @@ export type BadgeIconType =
   | 'shulchan'
   | 'arcade'
   | 'worksheet'
+  | 'daily'
   | 'crown';
 
 export interface BadgeProgress {
@@ -42,7 +43,9 @@ function countLessonSolved(
 }
 
 function countTotalSolvedChallenges(solvedLog: Record<string, string>): number {
-  return Object.keys(solvedLog).filter((k) => !k.startsWith('game:')).length;
+  return Object.keys(solvedLog).filter(
+    (k) => !k.startsWith('game:') && !k.startsWith('daily:')
+  ).length;
 }
 
 function countTotalGameWins(state: SavedProgressState): number {
@@ -187,6 +190,18 @@ export const REWARD_BADGES: BadgeDefinition[] = [
       current: Math.min(state.worksheetsDownloaded, 1),
       target: 1,
     }),
+  },
+  {
+    id: 'daily-challenger',
+    title: '24-Hour Daily Champion',
+    hebrewTitle: 'אתגר יומי',
+    description: 'Solve a Daily Math Challenge within its 24-hour window.',
+    accent: 'amber',
+    iconType: 'daily',
+    evaluate: (state) => {
+      const count = Object.keys(state.dailyChallengesSolved).length;
+      return { earned: count >= 1, current: Math.min(count, 1), target: 1 };
+    },
   },
   {
     id: 'cheshbon-master',

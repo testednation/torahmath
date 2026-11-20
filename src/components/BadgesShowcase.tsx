@@ -150,6 +150,14 @@ export function BadgeMedalArt({
           <line x1="26" y1="41" x2="33" y2="41" strokeLinecap="round" />
         </g>
       )}
+      {iconType === 'daily' && (
+        <g stroke={palette.fg} strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="32" cy="34" r="13" fill={palette.detail} fillOpacity="0.22" />
+          <line x1="27" y1="17" x2="37" y2="17" />
+          <line x1="32" y1="17" x2="32" y2="21" />
+          <polyline points="32 27 32 34 37 37" fill="none" />
+        </g>
+      )}
       {iconType === 'crown' && (
         <g stroke={palette.fg} strokeWidth="2.4" strokeLinejoin="round">
           <path d="M16 42L19 23L27 31L32 19L37 31L45 23L48 42H16Z" fill={palette.detail} fillOpacity="0.3" />
@@ -215,7 +223,7 @@ export function BadgesShowcase({
             >
               {progress.studentName
                 ? `${progress.studentName}’s Badge Collection`
-                : 'Collect All 12 Cheshbon Badges'}
+                : `Collect All ${REWARD_BADGES.length} Cheshbon Badges`}
             </h2>
 
             {editingName ? (

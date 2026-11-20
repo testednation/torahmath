@@ -34,6 +34,7 @@ import { LessonPreviewArt } from './components/LessonPreviewArt';
 import { LessonChallengePanel } from './components/LessonChallengePanel';
 import { PracticeArena } from './components/PracticeArena';
 import { DailyWisdomBanner } from './components/DailyWisdomBanner';
+import { DailyMathChallenge } from './components/DailyMathChallenge';
 import { WeeklyProgressChart } from './components/WeeklyProgressChart';
 import { BeginnerTutorial } from './components/BeginnerTutorial';
 import { WorksheetModal } from './components/WorksheetModal';
@@ -69,10 +70,17 @@ export default function App() {
   const [worksheetLessonId, setWorksheetLessonId] = useState<LessonId | null>(null);
   const [toastBadge, setToastBadge] = useState<BadgeDefinition | null>(null);
 
-  const { solvedLog, beginnerDone, beginnerStep, gameStats, studentName } = progress;
+  const {
+    solvedLog,
+    beginnerDone,
+    beginnerStep,
+    gameStats,
+    studentName,
+    dailyChallengesSolved,
+  } = progress;
 
   const solvedIds = Object.keys(solvedLog).filter(
-    (k) => !k.startsWith('game:')
+    (k) => !k.startsWith('game:') && !k.startsWith('daily:')
   );
 
   // Autosave all progress locally on every change
@@ -142,6 +150,27 @@ export default function App() {
         solvedLog: {
           ...prev.solvedLog,
           [questionId]: new Date().toISOString(),
+        },
+        ...streak,
+      };
+    });
+  }
+
+  function handleSolveDailyChallenge(dateKey: string, track: TrackType) {
+    setProgress((prev) => {
+      if (prev.dailyChallengesSolved[dateKey]) return prev;
+      const nowIso = new Date().toISOString();
+      const streak = computeNextStreak(prev.streakDays, prev.lastStudyDate);
+      const dailyLogKey = `daily:${track}:${dateKey}`;
+      return {
+        ...prev,
+        dailyChallengesSolved: {
+          ...prev.dailyChallengesSolved,
+          [dateKey]: nowIso,
+        },
+        solvedLog: {
+          ...prev.solvedLog,
+          [dailyLogKey]: nowIso,
         },
         ...streak,
       };
@@ -529,6 +558,13 @@ export default function App() {
                 </p>
               </div>
             </section>
+
+            {/* Daily Math Challenge (Unique Problem Each Day + 24h Bonus Badge) */}
+            <DailyMathChallenge
+              dailyChallengesSolved={dailyChallengesSolved}
+              onSolveDaily={handleSolveDailyChallenge}
+              onOpenLesson={openLesson}
+            />
 
             {/* Kids & Beginners Quick-Start + Math Games Arcade Entry */}
             <section
@@ -1075,6 +1111,7 @@ export default function App() {
               Practice Quiz
             </button>
             {(Object.keys(solvedLog).length > 0 ||
+              Object.keys(dailyChallengesSolved).length > 0 ||
               beginnerDone ||
               totalGameWins > 0 ||
               progress.worksheetsDownloaded > 0 ||

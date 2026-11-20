@@ -10,6 +10,7 @@ export interface SavedProgressState {
   beginnerStep: number;
   gameStats: Record<string, GameStats>;
   unlockedBadges: Record<string, string>;
+  dailyChallengesSolved: Record<string, string>;
   worksheetsDownloaded: number;
   streakDays: number;
   lastStudyDate: string | null;
@@ -56,6 +57,7 @@ export const DEFAULT_PROGRESS: SavedProgressState = {
   beginnerStep: 0,
   gameStats: {},
   unlockedBadges: {},
+  dailyChallengesSolved: {},
   worksheetsDownloaded: 0,
   streakDays: 0,
   lastStudyDate: null,
@@ -97,6 +99,9 @@ export function loadLocalProgress(): SavedProgressState {
             ? (parsed.gameStats as Record<string, GameStats>)
             : {},
         unlockedBadges: sanitizeStringRecord(parsed.unlockedBadges),
+        dailyChallengesSolved: sanitizeStringRecord(
+          parsed.dailyChallengesSolved
+        ),
         worksheetsDownloaded:
           typeof parsed.worksheetsDownloaded === 'number'
             ? parsed.worksheetsDownloaded
@@ -179,7 +184,9 @@ export function saveLocalProgress(state: SavedProgressState): void {
     window.localStorage.setItem(
       LEGACY_SOLVED_KEY,
       JSON.stringify(
-        Object.keys(state.solvedLog).filter((k) => !k.startsWith('game:'))
+        Object.keys(state.solvedLog).filter(
+          (k) => !k.startsWith('game:') && !k.startsWith('daily:')
+        )
       )
     );
     window.localStorage.setItem(

@@ -117,11 +117,20 @@ export function WeeklyProgressChart({
         let track: TrackType | undefined = QUESTION_TRACK_MAP[entryId];
         if (track) {
           curriculumCount += 1;
-        } else if (entryId.startsWith('game:torah:')) {
+        } else if (
+          entryId.startsWith('game:torah:') ||
+          entryId.startsWith('daily:torah:')
+        ) {
           track = 'torah';
-        } else if (entryId.startsWith('game:gemara:')) {
+        } else if (
+          entryId.startsWith('game:gemara:') ||
+          entryId.startsWith('daily:gemara:')
+        ) {
           track = 'gemara';
-        } else if (entryId.startsWith('game:shulchan-aruch:')) {
+        } else if (
+          entryId.startsWith('game:shulchan-aruch:') ||
+          entryId.startsWith('daily:shulchan-aruch:')
+        ) {
           track = 'shulchan-aruch';
         }
         if (!track) continue;
