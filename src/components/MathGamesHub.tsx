@@ -14,6 +14,7 @@ import { GematriaMemoryGame } from './games/GematriaMemoryGame';
 import { BeitDinScaleGame } from './games/BeitDinScaleGame';
 import { TzedakahPushkaGame } from './games/TzedakahPushkaGame';
 import { ShabbatClockGame } from './games/ShabbatClockGame';
+import { GematriaCalculatorGame } from './games/GematriaCalculatorGame';
 import { isSoundEnabled, setSoundEnabled, playTap } from '../utils/soundFx';
 
 export type GameId =
@@ -22,7 +23,8 @@ export type GameId =
   | 'gematria-memory'
   | 'beit-din-scale'
   | 'tzedakah-pushka'
-  | 'shabbat-clock';
+  | 'shabbat-clock'
+  | 'gematria-calculator';
 
 export interface GameStats {
   wins: number;
@@ -119,6 +121,18 @@ const GAME_CATALOG: GameCatalogItem[] = [
     ageRange: 'Ages 6–12',
     summary:
       'Wind the analog and digital clock backward from Friday sunset—by 10 or 15 minutes in Beginner mode, or the authentic 18 minutes in Explorer mode!',
+  },
+  {
+    id: 'gematria-calculator',
+    order: 7,
+    track: 'torah',
+    title: 'Gematria Calculator',
+    hebrewTitle: 'מחשבון גימטריא',
+    sourceRef: 'Mispar Hechrechi',
+    mathSkill: 'Hebrew Letter Values & Real-Time Addition',
+    ageRange: 'Ages 5–12',
+    summary:
+      'Type any Hebrew word or your own name—with a built-in Alef-Bet keyboard—to see its real-time Gematria sum, letter breakdown, and Torah twins!',
   },
 ];
 
@@ -279,6 +293,24 @@ function GameMiniIllustration({ gameId }: { gameId: GameId }) {
           </text>
         </svg>
       );
+
+    case 'gematria-calculator':
+      return (
+        <svg viewBox="0 0 220 84" className="w-full h-20" aria-hidden="true">
+          <rect width="220" height="84" rx="10" fill="#F8FAFC" />
+          <rect x="18" y="14" width="112" height="34" rx="7" fill="#FFFFFF" stroke="#CBD5E1" strokeWidth="1.6" />
+          <text x="74" y="37" textAnchor="middle" fontSize="19" fontWeight="700" fill="#0F172A">
+            שלום
+          </text>
+          <rect x="140" y="14" width="62" height="34" rx="7" fill="#EFF6FF" stroke="#1D4ED8" strokeWidth="1.8" />
+          <text x="171" y="36" textAnchor="middle" fontSize="15" fontFamily="IBM Plex Mono, monospace" fontWeight="700" fill="#1D4ED8">
+            = 376
+          </text>
+          <text x="110" y="68" textAnchor="middle" fontSize="10" fontFamily="IBM Plex Mono, monospace" fontWeight="600" fill="#047857">
+            300 + 30 + 6 + 40
+          </text>
+        </svg>
+      );
   }
 }
 
@@ -363,6 +395,17 @@ export function MathGamesHub({
     );
   }
 
+  if (activeGame === 'gematria-calculator') {
+    return (
+      <GematriaCalculatorGame
+        onBack={() => setActiveGame(null)}
+        onCompleteRound={(score) =>
+          onRecordGameWin('gematria-calculator', 'torah', score)
+        }
+      />
+    );
+  }
+
   return (
     <div className="space-y-8">
       {/* Arcade Header Banner */}
@@ -404,7 +447,7 @@ export function MathGamesHub({
               <strong className="text-slate-900">{totalWins}</strong> games completed
             </span>
             <span>·</span>
-            <span>6 interactive games</span>
+            <span>{GAME_CATALOG.length} interactive games &amp; tools</span>
           </div>
         </div>
 
@@ -477,7 +520,7 @@ export function MathGamesHub({
                     : 'Beginner & Explorer modes'}
                 </span>
                 <span className="text-blue-700 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
-                  Play Game
+                  {game.id === 'gematria-calculator' ? 'Open Calculator' : 'Play Game'}
                   <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                 </span>
               </div>

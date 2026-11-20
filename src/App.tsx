@@ -499,7 +499,7 @@ export default function App() {
                     onClick={() => openGames(null)}
                     className="text-sm font-semibold text-slate-700 hover:text-blue-700 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                   >
-                    Play 6 Math Games →
+                    Play 7 Math Games →
                   </button>
                 </div>
               </div>
@@ -547,7 +547,7 @@ export default function App() {
               </div>
               <div>
                 <p className="font-mono text-2xl font-bold text-blue-700 tabular-nums">
-                  6 Math Games
+                  7 Math Games
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
                   {totalGameWins > 0
@@ -625,13 +625,13 @@ export default function App() {
                 <div className="p-6 flex-1 flex flex-col justify-between gap-4">
                   <div>
                     <p className="text-xs text-slate-500 mb-1">
-                      Math Games Arcade · 6 Replayable Games · Beginner &amp; Explorer Levels
+                      Math Games Arcade · 7 Interactive Games &amp; Tools · Beginner &amp; Explorer Levels
                     </p>
                     <h2 className="text-xl font-bold text-slate-900 mb-2">
-                      Play Manna, Ark Pairs, Memory, Scales, Pushka &amp; Shabbat Clock
+                      Play Manna, Ark Pairs, Memory, Scales, Pushka, Clock &amp; Gematria Calculator
                     </h2>
                     <p className="text-sm text-slate-600 leading-relaxed">
-                      Practice adding to 10 with golden Manna, counting Noah’s Ark pairs, matching Gematria tiles, balancing Beit Din coins, dropping 10% Tzedakah coins, and setting the 18-minute Shabbat clock.
+                      Practice adding to 10 with golden Manna, counting Noah’s Ark pairs, matching Gematria tiles, balancing Beit Din coins, dropping 10% Tzedakah coins, setting the Shabbat clock, and calculating real-time Hebrew Gematria for any word or name.
                     </p>
                   </div>
                   <div>
