@@ -1,0 +1,8 @@
+{
+  "name": "Cheshbon — Torah & Gemara Math Studio",
+  "description": "An interactive math tutorial for kids exploring addition, volume, fractions, geometry, ratios, and place value through real Torah and Gemara examples.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
