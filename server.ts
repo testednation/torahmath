@@ -230,7 +230,11 @@ async function startServer() {
   if (process.env.NODE_ENV === 'production') {
     const distPath = path.resolve(__dirname, 'dist');
     app.use(express.static(distPath));
-    app.get('/{*splat}', (_req, res) => {
+    app.use((req, res) => {
+      if (req.path.startsWith('/api/')) {
+        res.status(404).json({ error: 'API route not found.' });
+        return;
+      }
       res.sendFile(path.join(distPath, 'index.html'));
     });
   } else {
@@ -254,10 +258,12 @@ async function startServer() {
             next();
             return;
           }
-          const patchedCode = result.code.replace(
-            'await wsTransport.connect(handlers);',
-            'return;'
-          );
+          const patchedCode = result.code
+            .replace('await wsTransport.connect(handlers);', 'return;')
+            .replace(
+              'ws.send(JSON.stringify(data));',
+              'if (ws && ws.readyState === ws.OPEN) ws.send(JSON.stringify(data));'
+            );
           res
             .status(200)
             .setHeader('Content-Type', 'application/javascript; charset=utf-8')

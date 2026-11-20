@@ -4,7 +4,6 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronUp,
-  AlertCircle,
   WifiOff,
 } from 'lucide-react';
 import { useOnlineStatus } from '../hooks/useOnlineStatus';
@@ -22,7 +21,7 @@ export interface DailyWisdom {
 
 const CACHE_KEY = 'cheshbon_daily_wisdom_v1';
 
-const OFFLINE_WISDOM_BANK: Omit<DailyWisdom, 'date'>[] = [
+const BUILTIN_WISDOM_BANK: Omit<DailyWisdom, 'date'>[] = [
   {
     title: 'Counting the Omer Is a 7 × 7 Square!',
     hebrewPhrase: 'ספירת העומר',
@@ -86,6 +85,69 @@ const OFFLINE_WISDOM_BANK: Omit<DailyWisdom, 'date'>[] = [
     quickQuestion: 'Add 8 Shamash candles to the 36 night candles—how many come in a box?',
     quickAnswer: '36 + 8 = 44 candles in every Chanukah box!',
   },
+  {
+    title: 'Noah’s Ark: A Giant 6-to-1 Ship Ratio',
+    hebrewPhrase: 'תיבת נח',
+    fact: 'Bereishit 6:15 gives Noah’s Ark exact blueprints: 300 amot long by 50 amot wide by 30 amot tall. Its 6-to-1 length-to-width ratio matches modern cargo ships designed to stay steady in waves!',
+    source: 'Bereishit 6:15',
+    mathConcept: 'Ratios & 3D Volume',
+    quickQuestion: 'What is the floor area of ONE deck of the Ark (300 amot × 50 amot)?',
+    quickAnswer: '300 × 50 = 15,000 square amot (and 45,000 across all 3 decks)!',
+  },
+  {
+    title: 'The 18-Minute Shabbat Candle Countdown',
+    hebrewPhrase: 'הדלקת נרות',
+    fact: 'Following Shulchan Aruch Orach Chaim 263:4, many communities light Shabbat candles 18 minutes before sunset—and 18 is the exact Gematria of חי (Chai, Life)!',
+    source: 'Orach Chaim 263:4',
+    mathConcept: 'Time Subtraction',
+    quickQuestion: 'If sunset is at 6:00 PM, what time is 18 minutes earlier?',
+    quickAnswer: '6:00 PM − 18 minutes = 5:42 PM!',
+  },
+  {
+    title: 'Measuring the Top Third for a Mezuzah',
+    hebrewPhrase: 'קביעת מזוזה',
+    fact: 'In Yoreh Deah 289:2, the Shulchan Aruch instructs hanging a Mezuzah at the start of the top third (2/3 up the doorway) while staying at least 1 handbreadth below the top lintel.',
+    source: 'Yoreh Deah 289:2',
+    mathConcept: 'Fractions (Thirds) & Measurement',
+    quickQuestion: 'On a 90-inch doorway, how many inches tall is each one-third section?',
+    quickAnswer: '90 ÷ 3 = 30 inches per third, so the top third begins at 60 inches!',
+  },
+  {
+    title: 'The 1-to-60 Kosher Kitchen Ratio',
+    hebrewPhrase: 'בטל בשישים',
+    fact: 'In Chullin 98a, the Sages teach Batel B’Shishim: if 1 accidental drop falls into a pot with at least 60 times as much kosher soup, the ratio is 60:1 and the flavor disappears!',
+    source: 'Chullin 98a',
+    mathConcept: 'Ratios & Multiplying by 60',
+    quickQuestion: 'If 2 spoons drip into a pot, how many spoons of kosher soup are needed for 60:1?',
+    quickAnswer: '2 × 60 = 120 spoons of kosher soup!',
+  },
+  {
+    title: 'The Square Diagonal Shortcut in Sukkah 8a',
+    hebrewPhrase: 'אלכסון הריבוע',
+    fact: 'In Sukkah 8a, the Gemara gives a clever rule for any square: its diagonal is about 1 and 2/5 (1.4) times its side length—remarkably close to √2 ≈ 1.414!',
+    source: 'Sukkah 8a',
+    mathConcept: 'Geometry & Square Diagonals',
+    quickQuestion: 'Using the Sages’ 1.4 rule, about how long is the diagonal of a 10 × 10 square?',
+    quickAnswer: '10 × 1.4 = 14 units!',
+  },
+  {
+    title: 'Shabbat Walking Boundary: 2,000 Amot',
+    hebrewPhrase: 'תחום שבת',
+    fact: 'In Eruvin 51a, the Sages measure the Techum Shabbat—how far you may walk outside a town on Shabbat—as 2,000 amot in every direction, forming a big boundary around the city.',
+    source: 'Eruvin 51a',
+    mathConcept: 'Perimeter & Large Numbers',
+    quickQuestion: 'If you can walk 2,000 amot East and 2,000 amot West from town, how wide is that span?',
+    quickAnswer: '2,000 + 2,000 = 4,000 amot across!',
+  },
+  {
+    title: 'Twelve Tribes and Four Camps in the Desert',
+    hebrewPhrase: 'שנים עשר שבטים',
+    fact: 'In Bamidbar 2, the 12 Tribes of Israel camped symmetrically around the Mishkan in 4 equal groups—North, South, East, and West—showing neat division and symmetry!',
+    source: 'Bamidbar 2:2',
+    mathConcept: 'Division & Symmetry',
+    quickQuestion: 'If 12 Tribes are split evenly into 4 directional camps, how many Tribes are in each camp?',
+    quickAnswer: '12 ÷ 4 = 3 Tribes on each side of the Mishkan!',
+  },
 ];
 
 function getLocalDateKey(): string {
@@ -94,6 +156,14 @@ function getLocalDateKey(): string {
   const m = String(now.getMonth() + 1).padStart(2, '0');
   const d = String(now.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
+}
+
+function getDayOfYearIndex(): number {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now.getTime() - start.getTime();
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  return dayOfYear % BUILTIN_WISDOM_BANK.length;
 }
 
 function formatReadableDate(dateKey: string): string {
@@ -134,11 +204,11 @@ function saveCachedWisdom(wisdom: DailyWisdom) {
   }
 }
 
-function getOfflineWisdomForIndex(idx: number, todayKey: string): DailyWisdom {
+function getBuiltinWisdomForIndex(idx: number, todayKey: string): DailyWisdom {
   const item =
-    OFFLINE_WISDOM_BANK[
-      ((idx % OFFLINE_WISDOM_BANK.length) + OFFLINE_WISDOM_BANK.length) %
-        OFFLINE_WISDOM_BANK.length
+    BUILTIN_WISDOM_BANK[
+      ((idx % BUILTIN_WISDOM_BANK.length) + BUILTIN_WISDOM_BANK.length) %
+        BUILTIN_WISDOM_BANK.length
     ];
   return { ...item, date: todayKey };
 }
@@ -146,8 +216,10 @@ function getOfflineWisdomForIndex(idx: number, todayKey: string): DailyWisdom {
 export function DailyWisdomBanner() {
   const isOnline = useOnlineStatus();
   const todayKey = getLocalDateKey();
-  const [offlineIdx, setOfflineIdx] = useState<number>(() => new Date().getDay());
-  const [isOfflineSource, setIsOfflineSource] = useState<boolean>(false);
+  const [builtinIdx, setBuiltinIdx] = useState<number>(() => getDayOfYearIndex());
+  const [sourceMode, setSourceMode] = useState<'live' | 'library'>(() =>
+    typeof navigator !== 'undefined' && !navigator.onLine ? 'library' : 'live'
+  );
 
   const [wisdom, setWisdom] = useState<DailyWisdom | null>(() => {
     const exact = readCachedWisdom(todayKey, false);
@@ -155,7 +227,7 @@ export function DailyWisdomBanner() {
     if (typeof navigator !== 'undefined' && !navigator.onLine) {
       return (
         readCachedWisdom(todayKey, true) ??
-        getOfflineWisdomForIndex(new Date().getDay(), todayKey)
+        getBuiltinWisdomForIndex(getDayOfYearIndex(), todayKey)
       );
     }
     return null;
@@ -169,17 +241,15 @@ export function DailyWisdomBanner() {
     if (typeof navigator !== 'undefined' && !navigator.onLine) return false;
     return true;
   });
-  const [error, setError] = useState<string | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
 
-  const loadOfflineFact = useCallback(
+  const loadBuiltinFact = useCallback(
     (advance: boolean) => {
-      setError(null);
       setShowAnswer(false);
-      setIsOfflineSource(true);
-      setOfflineIdx((prev) => {
-        const next = advance ? (prev + 1) % OFFLINE_WISDOM_BANK.length : prev;
-        setWisdom(getOfflineWisdomForIndex(next, todayKey));
+      setSourceMode('library');
+      setBuiltinIdx((prev) => {
+        const next = advance ? (prev + 1) % BUILTIN_WISDOM_BANK.length : prev;
+        setWisdom(getBuiltinWisdomForIndex(next, todayKey));
         return next;
       });
       setLoading(false);
@@ -189,13 +259,13 @@ export function DailyWisdomBanner() {
 
   const fetchWisdom = useCallback(
     async (refresh: boolean, excludeList: string[]) => {
-      if (!navigator.onLine) {
-        loadOfflineFact(refresh);
+      // If offline or already using built-in library (e.g. static deployment without /api route), cycle locally
+      if (!navigator.onLine || (refresh && sourceMode === 'library')) {
+        loadBuiltinFact(refresh);
         return;
       }
 
       setLoading(true);
-      setError(null);
       setShowAnswer(false);
 
       try {
@@ -207,45 +277,58 @@ export function DailyWisdomBanner() {
           }
         }
 
-        const res = await fetch(`/api/daily-wisdom?${params.toString()}`);
-        const data = (await res.json()) as DailyWisdom & { error?: string };
+        const res = await fetch(`/api/daily-wisdom?${params.toString()}`, {
+          headers: { Accept: 'application/json' },
+        });
 
-        if (!res.ok) {
-          throw new Error(
-            data.error || 'Unable to load today’s Torah math wisdom.'
-          );
+        const contentType = res.headers.get('content-type') ?? '';
+        const rawText = await res.text();
+
+        // Guard against static-host 404 plain text ("The page could not be found") or HTML SPA fallbacks
+        if (!contentType.includes('application/json') || !rawText.trim().startsWith('{')) {
+          loadBuiltinFact(refresh);
+          return;
+        }
+
+        let data: (DailyWisdom & { error?: string }) | null = null;
+        try {
+          data = JSON.parse(rawText) as DailyWisdom & { error?: string };
+        } catch {
+          loadBuiltinFact(refresh);
+          return;
+        }
+
+        if (!res.ok || !data || !data.title || !data.fact) {
+          // Fall back gracefully to cached or built-in Sage Wisdom library
+          const stale = !refresh ? readCachedWisdom(todayKey, true) : null;
+          if (stale) {
+            setWisdom(stale);
+            setSourceMode('library');
+          } else {
+            loadBuiltinFact(refresh);
+          }
+          return;
         }
 
         setWisdom(data);
-        setIsOfflineSource(false);
+        setSourceMode('live');
         setSeenTitles((prev) =>
           prev.includes(data.title) ? prev : [...prev, data.title]
         );
         saveCachedWisdom(data);
-      } catch (err) {
-        if (!navigator.onLine) {
-          loadOfflineFact(refresh);
-          return;
-        }
-        // If a network fetch fails (e.g. offline cache miss), fall back gracefully to local library
-        const stale = readCachedWisdom(todayKey, true);
-        if (stale && !refresh) {
+      } catch {
+        const stale = !refresh ? readCachedWisdom(todayKey, true) : null;
+        if (stale) {
           setWisdom(stale);
-          setIsOfflineSource(true);
-        } else if (err instanceof TypeError) {
-          loadOfflineFact(refresh);
+          setSourceMode('library');
         } else {
-          setError(
-            err instanceof Error
-              ? err.message
-              : 'Unable to load today’s Torah math wisdom.'
-          );
+          loadBuiltinFact(refresh);
         }
       } finally {
         setLoading(false);
       }
     },
-    [todayKey, loadOfflineFact]
+    [todayKey, sourceMode, loadBuiltinFact]
   );
 
   useEffect(() => {
@@ -273,7 +356,7 @@ export function DailyWisdomBanner() {
           </span>
           <span aria-hidden="true">·</span>
           <span>{readableDate}</span>
-          {(!isOnline || isOfflineSource) && (
+          {!isOnline && (
             <>
               <span aria-hidden="true">·</span>
               <span className="inline-flex items-center gap-1 font-medium text-amber-800">
@@ -305,8 +388,8 @@ export function DailyWisdomBanner() {
           <span>
             {loading
               ? 'Loading...'
-              : !isOnline
-              ? `Next Fact (${offlineIdx + 1}/${OFFLINE_WISDOM_BANK.length})`
+              : sourceMode === 'library'
+              ? `Next Fact (${builtinIdx + 1}/${BUILTIN_WISDOM_BANK.length})`
               : 'New Fact'}
           </span>
         </button>
@@ -321,40 +404,8 @@ export function DailyWisdomBanner() {
         </div>
       )}
 
-      {/* Error state (only shown if online server returns an API error) */}
-      {error && !loading && (
-        <div
-          role="alert"
-          className="mt-4 p-4 rounded-lg bg-rose-50 border border-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm text-rose-950"
-        >
-          <div className="flex items-start gap-2.5">
-            <AlertCircle
-              className="w-4 h-4 text-rose-700 shrink-0 mt-0.5"
-              aria-hidden="true"
-            />
-            <span>{error}</span>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={() => loadOfflineFact(false)}
-              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition-colors whitespace-nowrap cursor-pointer"
-            >
-              Use Offline Fact
-            </button>
-            <button
-              type="button"
-              onClick={() => void fetchWisdom(true, seenTitles)}
-              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-rose-700 hover:bg-rose-800 transition-colors whitespace-nowrap cursor-pointer"
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Loaded Daily Wisdom Content */}
-      {wisdom && !error && (
+      {wisdom && (
         <div
           className={`pt-4 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start transition-opacity ${
             loading ? 'opacity-60' : 'opacity-100'
